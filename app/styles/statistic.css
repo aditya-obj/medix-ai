@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+/* font-family: "Rubik", serif; */
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+/* font-family: "Titillium Web", serif; */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+/* font-family: "Space Grotesk", serif; */
+
+.statistic-container {
+    background-color: var(--white);
+    width: 100%;
+    min-height: 100vh;
+    height: fit-content;
+}
+.statistic-title-container {
+    min-height: 145px;
+    height: fit-content;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.statistic-title {
+    font-size: 45px;
+    padding-left: 5px;
+}
+
+.statistic-title-icon {
+    width: 55px;
+    height: 55px;
+    background-color: rgb(246, 246, 246);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.statistic-title-icon svg {
+    width: 30px;
+    height: 30px;
+}
+.statistic-title-content {
+    display: flex;
+    gap: 30px;
+    justify-content: end;
+    padding-right: 15px;
+    flex-wrap: wrap;
+}
+.statistic-bloodPressure, .statistic-heartRate, .statistic-Sugar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.statistic-title-content-heading {
+    font-family: "Space Grotesk", serif;
+    font-size: 30px;
+    font-weight: 500;
+    color: var(--black);
+}
+.statistic-title-content-subHeading {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--gray);
+}
+
+@media screen and (max-width: 600px) {
+    .statistic-title-content {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 0;
+        padding-left: 15px;
+        align-items: center;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.statistic-content {
+    display: flex;
+    width: fit-content;
+    padding: 15px;
+}
+.statistic-personalInfo {
+    background-color: var(--white-foreground);
+    border-radius: 20px;
+    max-width: 500px;
+    width: 500px;
+    height: 600px;;
+}
+.statistic-personalInfo-header-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.statistic-personalInfo-name {
+    font-size: 20px;
+}
+.statistic-personalInfo-status {
+    color: var(--gray);
+}
+.statistic-personalInfo-title {
+    font-size: 18px;
+    padding-top: 25px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+}
+.statistic-personalInfo-image {
+    padding-left: 10px;
+}
+.statistic-personalInfo-image, .statistic-personalInfo-image svg {
+    width: 80px;
+    height: 80px;
+}
+
+.statistic-personalInfo-slider {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 15px;
+}
+.statistic-personalInfo-contents {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.statistic-personalInfo-content {
+    font-size: 20px;
+    font-weight: 350;
+}
+.statistic-arrow-container {
+    display: flex;
+    gap: 5px;
+}
+.statistic-personalInfo-slider-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.statistic-arrow {
+    width: 40px;
+    height: 40px;
+    background-color: var(--white);
+
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.active-arrow {
+    background-color: var(--black);
+}
+.left {
+    display: none;
+}
+.statistic-personalInfo-content-right {
+    display: none;
+}
+.active-right {
+    display: none;
+}
+.statistic-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+.statistic-personalInfo-titles {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--gray);
+    font-weight: 300;
+    font-size: 16px;
+}
+.statistic-personalInfo-title-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+    margin-left: 15px;
+}
+.statistic-personalInfo-title-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+    
+/* .statistic-performance {
+    background-color: rgb(168, 60, 60);
+    max-width: 450px;
+    width: 450px;
+    height: 400px;
+}
+.statistic-analytics {
+    background-color: rgb(111, 255, 0);
+    max-width: 600px;
+    width: 600px;
+    height: 400px;
+} */

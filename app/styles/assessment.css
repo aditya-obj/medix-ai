@@ -1,0 +1,276 @@
+/* Assessment Container */
+.assessment-container {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px;
+    animation: fadeIn 0.5s ease-out;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    background-color: #fafafa;
+}
+
+/* Question Styles */
+.question {
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    height: fit-content;
+}
+
+.question-header {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+    letter-spacing: -0.2px;
+}
+
+/* Answer Options */
+.answer-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Form Controls */
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #2196f3;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-group-inner {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-group label {
+    min-width: 150px;
+    flex-shrink: 0;
+}
+
+.form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Modern Radio Button Styles */
+.radio-options {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.radio-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: auto;
+    cursor: pointer;
+}
+
+.radio-options input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.radio-options input[type="radio"]:checked {
+    border-color: #007bff;
+    background-color: #007bff;
+}
+
+.radio-options input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.radio-options input[type="radio"]:hover {
+    border-color: #007bff;
+}
+
+.radio-options input[type="radio"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Measurement Inputs */
+.measurement-input {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+.unit-select {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+/* Submit Button */
+.submit-button {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 300px;
+    margin: 40px auto;
+    padding: 16px 32px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #1976d2;
+}
+
+/* Conditional Inputs */
+.conditional-input {
+    margin-top: 16px;
+    padding-left: 16px;
+    border-left: 2px solid #d0d5dd;
+    width: 100%;
+}
+
+/* Blood Pressure Input */
+.blood-pressure-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+}
+
+.blood-pressure-input input {
+    width: 100px;
+    flex-shrink: 0;
+}
+
+/* Textarea Styles */
+textarea.form-control {
+    width: 100%;
+    resize: none;
+    height: 120px;
+    min-height: auto;
+    overflow-y: auto;
+    line-height: 1.5;
+}
+
+/* Select Styles */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .assessment-container {
+        padding: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .assessment-container {
+        grid-template-columns: 1fr;
+        padding: 24px;
+    }
+
+    .question {
+        padding: 24px;
+    }
+
+    .radio-options {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .measurement-input {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .unit-select {
+        width: 100%;
+    }
+
+    .submit-button {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .assessment-container {
+        padding: 16px;
+    }
+
+    .question {
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .question-header {
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px 14px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Adjust radio groups specifically */
+.radio-group .form-group-inner {
+    align-items: flex-start;
+}
