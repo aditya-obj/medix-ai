@@ -157,13 +157,7 @@
 .active-arrow {
     background-color: var(--black);
 }
-.left {
-    display: none;
-}
 .statistic-personalInfo-content-right {
-    display: none;
-}
-.active-right {
     display: none;
 }
 .statistic-arrow svg {
@@ -207,3 +201,23 @@
     width: 600px;
     height: 400px;
 } */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-disabled {
+    cursor: not-allowed;
+}
+
+.active-left, .active-right {
+    display: none;
+}
+
+.active-arrow .left, .active-arrow .right {
+    display: none;
+}
+
+.active-arrow .active-left, .active-arrow .active-right {
+    display: block;
+}
