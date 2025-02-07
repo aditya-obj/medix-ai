@@ -33,7 +33,7 @@ const Statistic = () => {
                         </div>
                         <div className="statistic-title-content-text">
                             <div className="statistic-title-content-heading">120/80</div>
-                            <div className="statistic-title-content-subHeading">BP (mmHg)</div>
+                            <div className="statistic-title-content-subHeading">Blood Pressure (mmHg)</div>
                         </div>
                     </div>
                     <div className="statistic-heartRate">
@@ -51,7 +51,7 @@ const Statistic = () => {
                         </div>
                         <div className="statistic-title-content-text">
                             <div className="statistic-title-content-heading">120/80</div>
-                            <div className="statistic-title-content-subHeading">Sugar (mg/dL)</div>
+                            <div className="statistic-title-content-subHeading">Sugar Level (mg/dL)</div>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-                                    <svg fill="#6b6b6b" viewBox="-8 0 512 512" xmlns="http://www.w3.org/2000/svg" stroke="#6b6b6b"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M127.79 314.01c4.31,-0.07 8.47,1.63 11.53,4.68l48.68 48.68 48.69 -48.68c6.24,-6.25 16.38,-6.25 22.62,0l48.69 48.68 48.68 -48.68c6.25,-6.25 16.38,-6.25 22.63,0l40 40c3,3 4.69,7.06 4.69,11.31 0,4.25 -1.69,8.31 -4.69,11.31 -3,3 -7.06,4.69 -11.31,4.69 -4.24,0 -8.31,-1.69 -11.32,-4.69l-28.68 -28.68 -48.69 48.68c-6.25,6.25 -16.38,6.25 -22.62,0l-48.69 -48.68 -48.69 48.68c-6.24,6.25 -16.37,6.25 -22.62,0l-48.69 -48.68 -28.68 28.68c-3.01,3 -7.07,4.69 -11.32,4.69 -4.25,0 -8.31,-1.69 -11.31,-4.69 -3,-3 -4.69,-7.06 -4.69,-11.31 0,-4.25 1.69,-8.31 4.69,-11.31l40 -40c2.95,-2.95 6.93,-4.63 11.1,-4.68zm24.21 -99.41l-28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7zm243.3 6.1c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7 -28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7zm-147.3 -212.7c-137,0 -248,111 -248,248 0,137 111,248 248,248 137,0 248,-111 248,-248 0,-137 -111,-248 -248,-248z"></path></g></svg>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12.0002 6L11.0064 9M16.5 6C17.8978 6 18.5967 6 19.1481 6.22836C19.8831 6.53284 20.4672 7.11687 20.7716 7.85195C21 8.40326 21 9.10218 21 10.5V16.2C21 17.8802 21 18.7202 20.673 19.362C20.3854 19.9265 19.9265 20.3854 19.362 20.673C18.7202 21 17.8802 21 16.2 21H7.8C6.11984 21 5.27976 21 4.63803 20.673C4.07354 20.3854 3.6146 19.9265 3.32698 19.362C3 18.7202 3 17.8802 3 16.2V10.5C3 9.10218 3 8.40326 3.22836 7.85195C3.53284 7.11687 4.11687 6.53284 4.85195 6.22836C5.40326 6 6.10218 6 7.5 6M10 17H14M10.5415 3H13.4588C14.5397 3 15.0802 3 15.4802 3.18541C16.0136 3.43262 16.4112 3.90199 16.5674 4.46878C16.6845 4.89387 16.5957 5.42698 16.418 6.4932C16.2862 7.28376 16.2203 7.67904 16.0449 7.98778C15.8111 8.39944 15.4388 8.71481 14.9943 8.87778C14.661 9 14.2602 9 13.4588 9H10.5415C9.74006 9 9.33933 9 9.00596 8.87778C8.56146 8.71481 8.18918 8.39944 7.95536 7.98778C7.77999 7.67904 7.71411 7.28376 7.58235 6.4932C7.40465 5.42698 7.3158 4.89387 7.43291 4.46878C7.58906 3.90199 7.98669 3.43262 8.52009 3.18541C8.92014 3 9.46061 3 10.5415 3Z" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                                 </div>
                                 Weight
                             </div>
@@ -135,7 +135,7 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-                                    <svg fill="#6b6b6b" viewBox="-8 0 512 512" xmlns="http://www.w3.org/2000/svg" stroke="#6b6b6b"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M127.79 314.01c4.31,-0.07 8.47,1.63 11.53,4.68l48.68 48.68 48.69 -48.68c6.24,-6.25 16.38,-6.25 22.62,0l48.69 48.68 48.68 -48.68c6.25,-6.25 16.38,-6.25 22.63,0l40 40c3,3 4.69,7.06 4.69,11.31 0,4.25 -1.69,8.31 -4.69,11.31 -3,3 -7.06,4.69 -11.31,4.69 -4.24,0 -8.31,-1.69 -11.32,-4.69l-28.68 -28.68 -48.69 48.68c-6.25,6.25 -16.38,6.25 -22.62,0l-48.69 -48.68 -48.69 48.68c-6.24,6.25 -16.37,6.25 -22.62,0l-48.69 -48.68 -28.68 28.68c-3.01,3 -7.07,4.69 -11.32,4.69 -4.25,0 -8.31,-1.69 -11.31,-4.69 -3,-3 -4.69,-7.06 -4.69,-11.31 0,-4.25 1.69,-8.31 4.69,-11.31l40 -40c2.95,-2.95 6.93,-4.63 11.1,-4.68zm24.21 -99.41l-28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7zm243.3 6.1c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7 -28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7zm-147.3 -212.7c-137,0 -248,111 -248,248 0,137 111,248 248,248 137,0 248,-111 248,-248 0,-137 -111,-248 -248,-248z"></path></g></svg>
+                                    
                                 </div>
                                 Height
                             </div>
@@ -144,7 +144,7 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-                                    <svg fill="#6b6b6b" viewBox="-8 0 512 512" xmlns="http://www.w3.org/2000/svg" stroke="#6b6b6b"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M127.79 314.01c4.31,-0.07 8.47,1.63 11.53,4.68l48.68 48.68 48.69 -48.68c6.24,-6.25 16.38,-6.25 22.62,0l48.69 48.68 48.68 -48.68c6.25,-6.25 16.38,-6.25 22.63,0l40 40c3,3 4.69,7.06 4.69,11.31 0,4.25 -1.69,8.31 -4.69,11.31 -3,3 -7.06,4.69 -11.31,4.69 -4.24,0 -8.31,-1.69 -11.32,-4.69l-28.68 -28.68 -48.69 48.68c-6.25,6.25 -16.38,6.25 -22.62,0l-48.69 -48.68 -48.69 48.68c-6.24,6.25 -16.37,6.25 -22.62,0l-48.69 -48.68 -28.68 28.68c-3.01,3 -7.07,4.69 -11.32,4.69 -4.25,0 -8.31,-1.69 -11.31,-4.69 -3,-3 -4.69,-7.06 -4.69,-11.31 0,-4.25 1.69,-8.31 4.69,-11.31l40 -40c2.95,-2.95 6.93,-4.63 11.1,-4.68zm24.21 -99.41l-28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7zm243.3 6.1c15.2,15.2 -7.9,37.4 -22.6,22.6l-28.7 -28.7 -28.7 28.7c-14.8,14.8 -37.8,-7.5 -22.6,-22.6l28.7 -28.7 -28.7 -28.7c-15,-15 7.7,-37.6 22.6,-22.6l28.7 28.7 28.7 -28.7c15,-15 37.6,7.7 22.6,22.6l-28.7 28.7 28.7 28.7zm-147.3 -212.7c-137,0 -248,111 -248,248 0,137 111,248 248,248 137,0 248,-111 248,-248 0,-137 -111,-248 -248,-248z"></path></g></svg>
+                                    
                                 </div>
                                 Allergies
                             </div>
@@ -168,7 +168,7 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-
+                                    <svg fill="#6b6b6b" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#6b6b6b" stroke-width="0.00032"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>pill</title> <path d="M28.987 7.898c-1.618-2.803-5.215-3.779-8.010-2.146-9.273 5.417-6.35 3.666-15.822 9.135v0c-2.803 1.618-3.764 5.207-2.146 8.010s5.214 3.777 8.010 2.146c9.447-5.512 6.518-3.772 15.822-9.135 2.804-1.616 3.765-5.207 2.146-8.010zM26.544 15.141l-7.751 4.475c0.424-0.245 0.679-0.623 0.796-1.089 1.068-0.623 2.463-1.428 5.298-3.054 0.834-0.478 1.459-1.163 1.851-1.969l-0-0c0.654-1.343 0.644-2.99-0.153-4.376-0.115-0.2-0.262-0.368-0.401-0.544 0.679 2.050-0.15 4.373-2.097 5.489-2.236 1.282-3.578 2.057-4.571 2.636-0.417-1.701-1.638-3.688-2.945-4.926-1.888 1.115-2.616 1.559-7.348 4.271-1.921 1.101-2.752 3.377-2.122 5.407-0.023-0.012-0.046-0.024-0.069-0.036-0.109-0.135-0.217-0.27-0.306-0.426-0.797-1.387-0.807-3.033-0.153-4.376l-0-0c0.392-0.806 1.017-1.49 1.851-1.969 4.175-2.393 5.228-3.010 6.71-3.88-0.534-0.23-1.037-0.262-1.455-0.017l7.751-4.475c5.215-3.011 10.413 5.8 5.115 8.859z"></path> </g></svg>
                                 </div>
                                 Medication
                             </div>
@@ -204,7 +204,7 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#6b6b6b" stroke="#6b6b6b" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>tomato</title> <path d="M13,2a11.32,11.32,0,0,0-1,2c-.12.33-.22.66-.31,1C11.07,3.26,8.19,3.54,7,3c0,3.38,3.52,2.21,4.25,2.72C8.42,5.48,7.39,7.39,6,8c3.1,1.57,5,.06,5.72-1.84-.11.74-.65,4.92,2.28,4.84a8.14,8.14,0,0,0-1.31-4.91h.06C14,7.59,15.94,9.3,18,8a7.19,7.19,0,0,0-3.75-2.06C15.84,6,16.91,6.13,18,4a8.42,8.42,0,0,0-4.69,1c.47-.8,1.18-2,1.69-3ZM7,5c-3.91.89-5,4.23-5,8C2,18,6.47,22,12,22c4.89,0,10-2.84,10-10,0-3-1.17-6-4-7a1.88,1.88,0,0,1-1,1c.54.19,1.42,1.39,2,2-.31.81-1.8,1.52-4.34,1a9.86,9.86,0,0,1,0,3,4.07,4.07,0,0,1-4-3C8.25,10.5,4.93,8.68,5,8c.88-.61,2-1.83,3-2A2.82,2.82,0,0,1,7,5Z"></path> <rect width="24" height="24" fill="none"></rect> </g></svg>
                                 </div>
                                 Diet
                             </div>
@@ -213,25 +213,17 @@ const Statistic = () => {
                         <div className="statistic-personalInfo-contents">
                             <div className="statistic-personalInfo-titles">
                                 <div className="statistic-personalInfo-title-icon">
-
+                                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M7 6H24.1429L7 24H25" stroke="#6b6b6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M29 15H41L29 29H41" stroke="#6b6b6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M15 32H24.0476L15 42H25" stroke="#6b6b6b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                                 </div>
                                 Sleep
                             </div>
                             <div className="statistic-personalInfo-content">8 Hrs</div>
                         </div>
-                        <div className="statistic-personalInfo-contents">
-                            <div className="statistic-personalInfo-titles">
-                                <div className="statistic-personalInfo-title-icon">
-
-                                </div>
-                                Medication
-                            </div>
-                            <div className="statistic-personalInfo-content">Paracetamol, Crocin</div>
-                        </div>
                     </div>
                 </div>
-                <div className="statistic-performance">d</div>
-                <div className="statistic-analytics">d</div>
+
+                <div className="statistic-performance"></div>
+                <div className="statistic-analytics"></div>
             </div>
             <div className="statistic-cont"></div>
         </div>
