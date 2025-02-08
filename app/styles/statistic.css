@@ -124,14 +124,16 @@
 
 .statistic-content {
     display: flex;
-    width: fit-content;
+    width: 100%;
     padding: 15px;
+    margin-top: 30px;
+    gap: 15px;
 }
 .statistic-personalInfo {
     background-color: var(--white-foreground);
     border-radius: 20px;
-    min-width: 500px;
-    width: 100%;
+    /* min-width: 300px; */
+    width: 30%;
     height: 600px;;
 }
 .statistic-personalInfo-header-content {
@@ -226,20 +228,7 @@
     height: 25px;
 }
 
-    
-/* .statistic-performance {
-    background-color: rgb(168, 60, 60);
-    max-width: 450px;
-    width: 450px;
-    height: 400px;
-}
-.statistic-analytics {
-    background-color: rgb(111, 255, 0);
-    max-width: 600px;
-    width: 600px;
-    height: 400px;
-} */
-
+   
 .cursor-pointer {
     cursor: pointer;
 }
@@ -266,6 +255,202 @@
         border-radius: 20px;
         min-width: fit-content;
         width: 94vw;
-        height: 600px;;
     }
+}
+
+
+
+ 
+.statistic-performance {
+    width: 25%;
+    border-radius: 20px;
+    height: 600px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.statistic-performance-container {
+    background-color: var(--white-foreground);
+    border-radius: 20px;
+    width: 100%;
+    height: 350px;
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.statistic-performance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 20px;
+}
+.statistic-performance-tag {
+    display: flex;
+    gap: 5px;
+}
+.statistic-performance-title{
+    font-size: 20px;
+}
+.statistic-performance-tag {
+    font-size: 22px;
+    color: var(--gray);
+}
+.statistic-performance-button {
+    background-color: var(--black);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.statistic-performance-button svg {
+    width: 18px;
+    height: 18px;
+    transform: rotate(-90deg);
+}
+
+
+.statistic-performance-footer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-evenly;
+    font-size: 18px;
+    border: 1.8px solid #9b9b9b57;
+    color: #6b6b6b;
+    padding: 5px 10px;
+    border-radius: 40px;
+}
+.statistic-performance-footer svg {
+    width: 32px;
+    height: 32px;
+}
+.statistic-performance-mid {
+    font-size: 55px;
+    font-weight: 300;
+
+    gap: 2px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 200px;
+}
+.statistic-performance-mid span {
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--gray);
+}
+
+.statistic-report-container {
+    background-color: var(--black);
+    border-radius: 20px;
+    width: 100%;
+    height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+.statistic-report-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.statistic-report-text {
+    color: #e5e5e5c7;
+    line-height: 1.3;
+    width: 150px;
+    height: 100%;
+    font-weight: 300;
+}
+.statistic-report-buttons {
+    display: flex;
+    gap: 5px;
+}
+.statistic-report-button {
+    width: 50px;
+    height: 50px;
+    background-color: var(--white);
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.statistic-report-button svg {
+    width: 25px;
+    height: 25px;
+}
+.link-btn svg {
+    transform: rotate(-45deg);
+}
+.active-link, .active-save {
+    display: none;
+}
+.link-btn, .save-btn {
+    transform: translateY(0);
+    transition: transform 0.5s ease, background-color 0.2s ease;
+}
+.link-btn:hover, .save-btn:hover {
+    background-color: var(--orange);
+    cursor: pointer;
+    transform: translateY(-5px);
+    transition: transform 0.5s ease, background-color 0.2s ease;
+}
+.link-btn:hover .active-link, .save-btn:hover .active-save {
+    display: block;
+}
+.link-btn:hover .link, .save-btn:hover .save {
+    display: none;
+}
+.link-btn:hover svg {
+    transform: rotate(-45deg) scale(1.1);
+    transition: transform 0.2s ease;
+}
+.save-btn:hover svg {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+
+}
+.statistic-report-header {
+    display: flex;
+    justify-content: space-between;
+}
+.statistic-report-title {
+    font-size: 42px;
+    color: var(--white);
+    font-weight: 300;
+    width: 110px;
+    line-height: 1;
+}
+.statistic-report-tag {
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 300;
+    width: 100px;
+    height: 30px;
+    border-radius: 40px;
+    border: 1.5px solid #e5e5e5a5;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.statistic-report-tag:hover {
+    background-color: #e5e5e5d5;
+    color: var(--black);
+}
+
+
+.statistic-analytics {
+    background-color: var(--white-foreground);
+    width: 45%;
+    border-radius: 20px;
+    height: 600px;
 }
