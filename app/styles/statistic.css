@@ -441,9 +441,10 @@
 }
 .statistic-analytics-tags {
   display: flex;
+  flex-wrap: nowrap;
   gap: 10px;
   width: 100%;
-  flex-wrap: wrap;
+  padding: 5px 0;
 }
 .statistic-analytics-tag {
   font-size: 15px;
@@ -451,11 +452,12 @@
   border-radius: 30px;
   color: var(--black);
   border: 2px solid #9b9b9b22;
-  width: fit-content;
-
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 .statistic-analytics-tag:hover {
   cursor: pointer;
@@ -469,31 +471,62 @@
   border: 2px solid var(--black);
 }
 
+.statistic-analytics-chart {
+  width: 100%;
+  height: 350px;
+  margin: 20px 0;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-chart-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 15px;
+  border-radius: 16px;
+  background: white;
+}
+
 .statistic-analytics-diet-container {
   display: flex;
-  gap: 10px;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
+
 .statistic-analytics-diet {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   font-size: 14px;
   background-color: var(--gray);
-  width: fit-content;
-  padding: 10px 13px;
+  flex: 1;
+  padding: 12px 15px;
   border-radius: 12px;
+  transition: all 0.3s ease;
 }
+
+.statistic-analytics-diet:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .statistic-analytics-diet-icon {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   background-color: var(--white);
-  border-radius: 13px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
 }
+
 .protein-diet {
   background-color: var(--white);
   color: var(--black);
@@ -530,14 +563,6 @@
 }
 .statistic-analytics-diet-text span {
   font-size: 14px;
-}
-
-.statistic-analytics-chart {
-  width: 100%;
-  height: 370px;
-  border: 2px solid #9b9b9b22;
-  border-radius: 20px;
-  margin: 15px 0;
 }
 
 @media screen and (max-width: 1310px) {
@@ -591,5 +616,142 @@
   }
   .statistic-analytics {
     width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .statistic-analytics {
+    padding: 12px;
+  }
+
+  .statistic-analytics-title {
+    font-size: 18px;
+    padding: 8px 0;
+  }
+
+  .statistic-analytics-tags {
+    flex-wrap: wrap;
+  }
+
+  .statistic-analytics-tag {
+    font-size: 13px;
+    padding: 8px 10px;
+    width: calc(50% - 4px);
+    flex: none;
+  }
+
+  .statistic-analytics-chart {
+    height: 300px;
+    margin: 15px 0;
+  }
+
+  .analytics-chart-container {
+    padding: 10px;
+  }
+
+  .statistic-analytics-diet-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .statistic-analytics-diet {
+    min-width: calc(50% - 5px);
+    flex: none;
+  }
+
+  .statistic-analytics-diet-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .statistic-analytics-diet-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .statistic-analytics-diet-text {
+    font-size: 20px;
+  }
+
+  .statistic-analytics-diet-text span {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .statistic-analytics {
+    padding: 10px;
+  }
+
+  .statistic-analytics-title {
+    font-size: 16px;
+    padding: 6px 0;
+  }
+
+  .statistic-analytics-tags {
+    gap: 6px;
+  }
+
+  .statistic-analytics-tag {
+    font-size: 12px;
+    padding: 6px 8px;
+    width: calc(50% - 3px);
+  }
+
+  .statistic-analytics-chart {
+    height: 250px;
+    margin: 12px 0;
+    border-radius: 12px;
+  }
+
+  .analytics-chart-container {
+    padding: 8px;
+  }
+
+  .statistic-analytics-diet-container {
+    gap: 8px;
+  }
+
+  .statistic-analytics-diet {
+    min-width: calc(50% - 4px);
+  }
+
+  .statistic-analytics-diet-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .statistic-analytics-diet-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .statistic-analytics-diet-title {
+    font-size: 12px;
+  }
+
+  .statistic-analytics-diet-text {
+    font-size: 16px;
+  }
+
+  .statistic-analytics-diet-text span {
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .statistic-analytics-tags {
+    gap: 6px;
+  }
+  .statistic-analytics-tag {
+    width: calc(50% - 3px);
+  }
+
+  .statistic-analytics-diet-container {
+    flex-direction: column;
+  }
+
+  .statistic-analytics-diet {
+    min-width: 100%;
   }
 }

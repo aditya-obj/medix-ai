@@ -2,6 +2,7 @@
 import { React, useState, useRef } from "react";
 import "@/app/styles/statistic.css";
 import PerformanceMeter from "./PerformanceMeter";
+import AnalyticsChart from "./AnalyticsChart";
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
@@ -9,6 +10,7 @@ const Statistic = () => {
   const [leftArrowStatus, setLeftArrowStatus] = useState(false);
   const [rightArrowStatus, setRightArrowStatus] = useState(true);
   const [performanceScore, setPerformanceScore] = useState(300);
+  const [selectedMetric, setSelectedMetric] = useState("Blood Pressure");
   const maxScore = 500;
 
   const handleLeftArrowClick = () => {
@@ -26,12 +28,12 @@ const Statistic = () => {
   };
 
   const handleTagClick = (e) => {
-    // Remove active-tag from all tags
     const tags = document.querySelectorAll(".statistic-analytics-tag");
     tags.forEach((tag) => tag.classList.remove("active-tag"));
 
-    // Add active-tag to clicked tag
     e.currentTarget.classList.add("active-tag");
+
+    setSelectedMetric(e.currentTarget.textContent.trim());
   };
 
   return (
@@ -596,9 +598,7 @@ const Statistic = () => {
               <div className="statistic-performance-title">Performance</div>
               <div className="statistic-performance-tag">
                 +10%
-                <div
-                  className="statistic-performance-button cursor-pointer"
-                >
+                <div className="statistic-performance-button cursor-pointer">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -795,7 +795,9 @@ const Statistic = () => {
             </div>
           </div>
 
-          <div className="statistic-analytics-chart"></div>
+          <div className="statistic-analytics-chart">
+            <AnalyticsChart selectedMetric={selectedMetric} />
+          </div>
 
           <div className="statistic-analytics-diet-container">
             <div className="statistic-analytics-diet protein-diet">
