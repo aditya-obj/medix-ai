@@ -20,6 +20,7 @@ const Statistic = () => {
     }
   };
 
+  // Handle right arrow click
   const handleRightArrowClick = () => {
     if (rightArrowStatus) {
       setLeftArrowStatus(true);
