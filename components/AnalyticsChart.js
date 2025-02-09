@@ -193,7 +193,8 @@ const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const metricData = {
   "Blood Pressure": {
-    data: [120, 122, 128, 125, 118, 124, 121],
+    activeData: [140, 122], // Active days data
+    inactiveData: [125, 130, 128, 135, 132], // Placeholder data for inactive days
     label: "mmHg",
     gradient: ["rgba(255, 99, 132, 0.3)", "rgba(255, 99, 132, 0.02)"],
     borderColor: "rgb(255, 99, 132)",
@@ -204,7 +205,8 @@ const metricData = {
     },
   },
   "Sugar Level": {
-    data: [85, 92, 88, 95, 87, 90, 86],
+    activeData: [85, 92],
+    inactiveData: [88, 90, 87, 89, 86],
     label: "mg/dL",
     gradient: ["rgba(75, 192, 192, 0.3)", "rgba(75, 192, 192, 0.02)"],
     borderColor: "rgb(75, 192, 192)",
@@ -215,7 +217,8 @@ const metricData = {
     },
   },
   "Heart Rate": {
-    data: [72, 75, 78, 73, 70, 74, 71],
+    activeData: [72, 75],
+    inactiveData: [73, 74, 71, 76, 73],
     label: "BPM",
     gradient: ["rgba(54, 162, 235, 0.3)", "rgba(54, 162, 235, 0.02)"],
     borderColor: "rgb(54, 162, 235)",
@@ -226,7 +229,8 @@ const metricData = {
     },
   },
   Performance: {
-    data: [75, 82, 88, 78, 85, 80, 83],
+    activeData: [75, 82],
+    inactiveData: [78, 80, 77, 81, 79],
     label: "%",
     gradient: ["rgba(153, 102, 255, 0.3)", "rgba(153, 102, 255, 0.02)"],
     borderColor: "rgb(153, 102, 255)",
@@ -266,12 +270,23 @@ function getPerformanceStatus(value) {
 }
 
 const AnalyticsChart = ({ selectedMetric }) => {
+  // Create arrays with null padding for proper positioning
+  const activeDataArray = [
+    ...metricData[selectedMetric].activeData,
+    ...Array(5).fill(null),
+  ];
+  const inactiveDataArray = [
+    ...Array(2).fill(null),
+    ...metricData[selectedMetric].inactiveData,
+  ];
+
   const chartData = {
     labels: days,
     datasets: [
       {
+        // Active days dataset
         fill: true,
-        data: metricData[selectedMetric].data,
+        data: activeDataArray,
         borderColor: metricData[selectedMetric].borderColor,
         metric: selectedMetric,
         backgroundColor: function (context) {
@@ -296,13 +311,41 @@ const AnalyticsChart = ({ selectedMetric }) => {
         },
         pointBackgroundColor: "#fff",
         pointBorderColor: metricData[selectedMetric].borderColor,
+        pointBorderWidth: 2,
         tension: 0.3,
-        clip: {
-          top: false,
-          bottom: false,
-          left: false,
-          right: false,
+        clip: false,
+      },
+      {
+        // Inactive days dataset
+        fill: true,
+        data: inactiveDataArray,
+        borderColor: "rgba(200, 200, 200, 0.6)",
+        metric: selectedMetric,
+        backgroundColor: function (context) {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+
+          if (!chartArea) {
+            return null;
+          }
+
+          const gradient = ctx.createLinearGradient(
+            0,
+            chartArea.bottom,
+            0,
+            chartArea.top
+          );
+          gradient.addColorStop(0, "rgba(200, 200, 200, 0.02)");
+          gradient.addColorStop(0.5, "rgba(200, 200, 200, 0.1)");
+          gradient.addColorStop(1, "rgba(200, 200, 200, 0.1)");
+
+          return gradient;
         },
+        pointBackgroundColor: "#f5f5f5",
+        pointBorderColor: "rgba(200, 200, 200, 0.6)",
+        pointBorderWidth: 1,
+        tension: 0.3,
+        clip: false,
       },
     ],
   };
@@ -343,6 +386,11 @@ const AnalyticsChart = ({ selectedMetric }) => {
         boxPadding: window?.innerWidth < 480 ? 2 : 3,
         callbacks: {
           label: function (context) {
+            // Check if this is from the inactive dataset
+            if (context.datasetIndex === 1) {
+              return "Inactive day";
+            }
+
             const metric = context.dataset.metric;
             const value = context.parsed.y;
 
@@ -367,9 +415,6 @@ const AnalyticsChart = ({ selectedMetric }) => {
               default:
                 return `${value} ${metricData[metric].label}`;
             }
-          },
-          title: function (tooltipItems) {
-            return tooltipItems[0].label;
           },
         },
       },
