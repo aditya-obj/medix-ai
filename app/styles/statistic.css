@@ -320,11 +320,6 @@
   justify-content: center;
   height: 200px;
 }
-.statistic-performance-mid span {
-  font-size: 30px;
-  font-weight: 300;
-  color: var(--gray);
-}
 
 .statistic-report-container {
   background-color: var(--black);

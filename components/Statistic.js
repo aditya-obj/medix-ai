@@ -1,12 +1,15 @@
 "use client";
 import { React, useState, useRef } from "react";
 import "@/app/styles/statistic.css";
+import PerformanceMeter from "./PerformanceMeter";
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
   const rightArrow = useRef(undefined);
   const [leftArrowStatus, setLeftArrowStatus] = useState(false);
   const [rightArrowStatus, setRightArrowStatus] = useState(true);
+  const [performanceScore, setPerformanceScore] = useState(300);
+  const maxScore = 650;
 
   const handleLeftArrowClick = () => {
     if (leftArrowStatus) {
@@ -593,7 +596,12 @@ const Statistic = () => {
               <div className="statistic-performance-title">Performance</div>
               <div className="statistic-performance-tag">
                 +10%
-                <div className="statistic-performance-button">
+                <div
+                  className="statistic-performance-button cursor-pointer"
+                  onClick={() =>
+                    setPerformanceScore((prev) => Math.min(prev + 50, maxScore))
+                  }
+                >
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -621,51 +629,16 @@ const Statistic = () => {
 
             <div className="statistic-performance-mid">
               <div className="performance-graph">
-                <div className="relative mb-10">
-                  <svg
-                    className="half-circle-pie m-auto rtl:-scale-x-100"
-                    viewBox="0 0 34 17"
-                    width="340px"
-                    height="170px"
-                    role="img"
-                    aria-label="Half circle chart showing performance"
-                  >
-                    {/* Calculate filled segments based on score (432 out of 650 max score) */}
-                    {Array.from({ length: 14 }).map((_, index) => {
-                      const isActive = index < Math.floor((432 / 650) * 14);
-                      return (
-                        <path
-                          key={index}
-                          className={`${
-                            isActive
-                              ? "fill-red-600"
-                              : "fill-gray-100 dark:fill-gray-700"
-                          } transition-colors duration-300`}
-                          d="M -2.7 -1.5 L 2.7 -0.98 C 3.1 -0.93 3.5 -0.582 3.5 -0.182 L 3.5 0.217 C 3.5 0.629 3.1 0.93 2.7 0.98 L -2.7 1.5 C -3.142 1.5 -3.5 1.142 -3.5 0.7 L -3.5 -0.7 C -3.5 -1.142 -3.142 -1.5 -2.7 -1.5 Z"
-                          transform={`translate(17,17) rotate(${
-                            6.43 + index * 12.86
-                          }) translate(-13.5,0)`}
-                        />
-                      );
-                    })}
-                  </svg>
-                  <div className="text-black dark:text-white absolute bottom-0 left-0 w-full text-center transition-colors duration-300">
-                    <div className="text-2xl sm:text-4xl font-medium mb-2">
-                      <span className="text-black dark:text-white value-score">
-                        432
-                      </span>
-                      <span className="text-gray-400 dark:text-gray-500">
-                        {" "}
-                        point
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <PerformanceMeter
+                  score={performanceScore}
+                  maxScore={maxScore}
+                />
               </div>
             </div>
 
-            <div className="statistic-performance-footer">
+            <div className="statistic-performance-footer flex items-center justify-center gap-2 whitespace-nowrap">
               <svg
+                className="w-6 h-6"
                 fill="#6b6b6b"
                 viewBox="-8 0 512 512"
                 xmlns="http://www.w3.org/2000/svg"
@@ -681,7 +654,7 @@ const Statistic = () => {
                   <path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm80 168c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm-160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm194.8 170.2C334.3 380.4 292.5 400 248 400s-86.3-19.6-114.8-53.8c-13.6-16.3 11-36.7 24.6-20.5 22.4 26.9 55.2 42.2 90.2 42.2s67.8-15.4 90.2-42.2c13.4-16.2 38.1 4.2 24.6 20.5z"></path>
                 </g>
               </svg>
-              You're healthier than 85% people
+              <span>You're healthier than 85% people</span>
             </div>
           </div>
 
