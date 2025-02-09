@@ -284,13 +284,6 @@ export default function Login({
                 <div className="reset-password-icon">
                   <FaLock />
                 </div>
-                <div className="reset-password-header">
-                  {/* <h2>Reset Your Password</h2> */}
-                  <p>
-                    Enter your email address and we'll send you instructions to
-                    reset your password.
-                  </p>
-                </div>
                 <form onSubmit={handleForgotPassword} className="form">
                   <div className="input-group">
                     <input

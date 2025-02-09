@@ -15,8 +15,8 @@
   }
   
   .add-wallpaper-dialog {
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--white-foreground);
+    border: 1px solid rgba(0, 0, 0, 0.428);
     border-radius: 20px;
     width: min(92%, 550px);
     max-height: 90vh;
@@ -50,8 +50,8 @@
     flex-direction: column;
     align-items: center;
     padding: 1.25rem 2rem;
-    background: #1a1a1a;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--white-foreground);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.432);
     margin-bottom: 1.5rem;
     flex-shrink: 0;
     transform: translateZ(0);
@@ -120,7 +120,7 @@
   .add-wallpaper-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.815);
+    color: var(--black);
     margin: 0;
     text-align: left;
     letter-spacing: -0.3px;
@@ -157,7 +157,7 @@
     padding: 1rem 1.25rem;
     border-radius: 14px;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--white);
     color: var(--color);
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -223,8 +223,8 @@
   
   .upload-button {
     padding: 1rem 2rem;
-    background: linear-gradient(135deg, #ff6600 0%, #a10000 70%, #a10000 100%);
-    color: var(--background);
+    background: linear-gradient(135deg, #ff6600 0%, #c91313 70%, #c91313 100%);
+    color: var(--white);
     border: none;
     border-radius: 12px;
     font-size: 1rem;

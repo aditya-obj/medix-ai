@@ -14,7 +14,7 @@
 }
 
 .auth-container {
-  background: var(--background);
+  background: var(--white);
   width: min(420px, 95%);
   border-radius: 20px;
   padding: 2.5rem;
@@ -944,7 +944,7 @@
 }
 
 .primary-action {
-  background: #00cc7d;
+  background: var(--orange);
   color: white;
   border: none;
   padding: 0.875rem;
@@ -956,7 +956,7 @@
 }
 
 .primary-action:hover:not(:disabled) {
-  background: #00cc7d;
+  background: var(--orange);
   opacity: 0.95;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 204, 125, 0.3);

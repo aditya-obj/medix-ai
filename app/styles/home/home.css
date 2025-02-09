@@ -10,7 +10,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: var(--foreground-white);
+    background-color: var(--white);
     z-index: 1000;
 }
 
@@ -50,7 +50,7 @@ main {
     margin: 0 auto;
     margin-top: 30px;
     height: fit-content;
-    background-color: var(--foreground-white);
+    background-color: var(--white);
     font-family: "Rubik", serif;
     display: flex;
     justify-content: space-evenly;

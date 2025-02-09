@@ -8,62 +8,72 @@ import Assessment from '@/components/authentication/Assessment';
 import Statistic from '@/components/Statistic';
 import Link from 'next/link';
 import Image from 'next/image';
+import Login from '@/components/authentication/Login';
 
 const Page = () => {
   const [showSignUpProfile, setShowSignUpProfile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
 
-  // useEffect(() => {
-  //   const checkUsername = async () => {
-  //     if (auth.currentUser) {
-  //       try {
-  //         const uid = auth.currentUser.uid;
-  //         const usernameRef = ref(db, `usernames/${uid}/username`);
-  //         const snapshot = await get(usernameRef);
-  //       } catch (error) {
-  //         console.error('Error checking username:', error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   };
+  const handleLoginClick = () => {
+    setShowLogin(true);
+  };
 
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       checkUsername();
-  //       const displayName = user.displayName;
-  //       const email = user.email;
-  //       if (displayName) {
-  //         setUsername(displayName);
-  //       } else if (email) {
-  //         const emailName = getCurrentUserEmailName();
-  //         setUsername(emailName.split('.')[0]);
-  //       } else {
-  //         setUsername('null');
-  //       }
-  //     } else {
-  //       setUsername('null');
-  //       setLoading(false);
-  //       setShowSignUpProfile(false);
-  //     }
-  //   });
+  const handleLoginClose = () => {
+    setShowLogin(false);
+  };
 
-  //   return () => {
-  //     unsubscribe();
-  //     // Cleanup any remaining containers on unmount
-  //     const container = document.getElementById('signup-profile-container');
-  //     if (container) {
-  //       container.remove();
-  //     }
-  //   };
-  // }, []);
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (auth.currentUser) {
+        try {
+          const uid = auth.currentUser.uid;
+          const usernameRef = ref(db, `usernames/${uid}/username`);
+          const snapshot = await get(usernameRef);
+        } catch (error) {
+          console.error('Error checking username:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        checkUsername();
+        const displayName = user.displayName;
+        const email = user.email;
+        if (displayName) {
+          setUsername(displayName);
+        } else if (email) {
+          const emailName = getCurrentUserEmailName();
+          setUsername(emailName.split('.')[0]);
+        } else {
+          setUsername('null');
+        }
+      } else {
+        setUsername('null');
+        setLoading(false);
+        setShowSignUpProfile(false);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      // Cleanup any remaining containers on unmount
+      const container = document.getElementById('signup-profile-container');
+      if (container) {
+        container.remove();
+      }
+    };
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main>
@@ -71,8 +81,18 @@ const Page = () => {
         <Link href="/" className="site-name">
           Medix<span> AI</span>
         </Link>
-        <div className="web-login">Login</div>
+        <div className="web-login" onClick={handleLoginClick}>Login</div>
       </nav>
+
+      {showLogin && (
+        <Login
+          onClose={handleLoginClose}
+          currentPath="/"
+          onLoginSuccess={() => {
+            // Handle successful login if needed
+          }}
+        />
+      )}
 
       <div className="hero-section">
         <div className="hero-section-content">
@@ -93,7 +113,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-
+      <Statistic />
     </main>
   );
 }
