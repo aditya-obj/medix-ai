@@ -5,7 +5,7 @@ const PerformanceMeter = ({
   maxScore,
   totalSegments = 20,
   activeColor = "fill-red-600",
-  inactiveColor = "fill-gray-100 dark:fill-gray-700",
+  inactiveColor = "fill-gray-100 dark:fill-gray-200",
   size = {
     width: "350px",
     height: "200",
@@ -44,10 +44,10 @@ const PerformanceMeter = ({
         })}
       </svg>
       <div className="absolute bottom-0 left-0 w-full text-center transition-colors duration-300">
-        <div className="font-bold text-6xl mb-1">
+        <div className="font-medium text-6xl mb-1">
           <span className="text-[#0f0f0f]">{score}</span>
           {showUnit && (
-            <span className="text-gray-600 text-base font-medium ml-0.5">
+            <span className="text-gray-400 text-base font-normal ml-0.5">
               {" "}
               {unit}
             </span>

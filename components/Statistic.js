@@ -9,7 +9,7 @@ const Statistic = () => {
   const [leftArrowStatus, setLeftArrowStatus] = useState(false);
   const [rightArrowStatus, setRightArrowStatus] = useState(true);
   const [performanceScore, setPerformanceScore] = useState(300);
-  const maxScore = 650;
+  const maxScore = 500;
 
   const handleLeftArrowClick = () => {
     if (leftArrowStatus) {
@@ -598,9 +598,6 @@ const Statistic = () => {
                 +10%
                 <div
                   className="statistic-performance-button cursor-pointer"
-                  onClick={() =>
-                    setPerformanceScore((prev) => Math.min(prev + 50, maxScore))
-                  }
                 >
                   <svg
                     viewBox="0 0 24 24"
