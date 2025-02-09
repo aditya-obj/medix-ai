@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,178 +23,12 @@ ChartJS.register(
   Legend
 );
 
-const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltip: {
-      mode: "index",
-      intersect: false,
-      backgroundColor: "rgba(0, 0, 0, 0.9)",
-      titleColor: "#fff",
-      bodyColor: "#fff",
-      padding: window?.innerWidth < 480 ? 6 : window?.innerWidth < 768 ? 8 : 12,
-      displayColors: false,
-      titleFont: {
-        size:
-          window?.innerWidth < 480 ? 11 : window?.innerWidth < 768 ? 12 : 14,
-        weight: "600",
-        family: "'Space Grotesk', sans-serif",
-      },
-      bodyFont: {
-        size:
-          window?.innerWidth < 480 ? 10 : window?.innerWidth < 768 ? 11 : 13,
-        family: "'Space Grotesk', sans-serif",
-      },
-      borderColor: "rgba(255, 255, 255, 0.15)",
-      borderWidth: window?.innerWidth < 480 ? 0.5 : 1,
-      cornerRadius: window?.innerWidth < 480 ? 4 : 6,
-      caretSize: window?.innerWidth < 480 ? 4 : 6,
-      caretPadding: window?.innerWidth < 480 ? 4 : 6,
-      boxPadding: window?.innerWidth < 480 ? 2 : 3,
-      callbacks: {
-        label: function (context) {
-          const metric = context.dataset.metric;
-          const value = context.parsed.y;
-
-          switch (metric) {
-            case "Blood Pressure":
-              const diastolic = Math.round(value * 0.65);
-              const bpStatus = getBPStatus(value);
-              return `${value}/${diastolic} mmHg (${bpStatus})`;
-
-            case "Sugar Level":
-              const sugarStatus = getSugarStatus(value);
-              return `${value} mg/dL (${sugarStatus})`;
-
-            case "Heart Rate":
-              const hrStatus = getHeartRateStatus(value);
-              return `${value} BPM (${hrStatus})`;
-
-            case "Performance":
-              const perfStatus = getPerformanceStatus(value);
-              return `${value}% (${perfStatus})`;
-
-            default:
-              return `${value} ${metricData[metric].label}`;
-          }
-        },
-        title: function (tooltipItems) {
-          return tooltipItems[0].label;
-        },
-      },
-    },
-  },
-  scales: {
-    y: {
-      min: 90,
-      max: 140,
-      position: "left",
-      grid: {
-        display: true,
-        color: "rgba(0, 0, 0, 0.04)",
-        drawBorder: false,
-        lineWidth: 1,
-      },
-      border: {
-        display: false,
-      },
-      ticks: {
-        padding:
-          window?.innerWidth < 480 ? 1 : window?.innerWidth < 768 ? 2 : 4,
-        color: "#666",
-        font: {
-          size:
-            window?.innerWidth < 480 ? 9 : window?.innerWidth < 768 ? 10 : 11,
-          weight: "500",
-          family: "'Space Grotesk', sans-serif",
-        },
-        maxTicksLimit:
-          window?.innerWidth < 480 ? 4 : window?.innerWidth < 768 ? 5 : 6,
-        align: "end",
-        labelOffset: -2,
-      },
-    },
-    x: {
-      grid: {
-        display: false,
-      },
-      border: {
-        display: false,
-      },
-      ticks: {
-        padding:
-          window?.innerWidth < 480 ? 1 : window?.innerWidth < 768 ? 2 : 4,
-        color: "#666",
-        font: {
-          size:
-            window?.innerWidth < 480 ? 9 : window?.innerWidth < 768 ? 10 : 11,
-          weight: "500",
-          family: "'Space Grotesk', sans-serif",
-        },
-        maxRotation: 0,
-        minRotation: 0,
-        autoSkipPadding: window?.innerWidth < 480 ? 1 : 2,
-        maxTicksLimit:
-          window?.innerWidth < 480 ? 4 : window?.innerWidth < 768 ? 5 : 7,
-      },
-      offset: false,
-      bounds: "data",
-    },
-  },
-  elements: {
-    line: {
-      tension: 0.3,
-      borderWidth:
-        window?.innerWidth < 480 ? 1.5 : window?.innerWidth < 768 ? 2 : 2.5,
-      capBezierPoints: true,
-    },
-    point: {
-      radius:
-        window?.innerWidth < 480 ? 2.5 : window?.innerWidth < 768 ? 3 : 3.5,
-      hoverRadius:
-        window?.innerWidth < 480 ? 4 : window?.innerWidth < 768 ? 5 : 6,
-      hitRadius:
-        window?.innerWidth < 480 ? 5 : window?.innerWidth < 768 ? 6 : 8,
-      borderWidth:
-        window?.innerWidth < 480 ? 1 : window?.innerWidth < 768 ? 1.5 : 2,
-      hoverBorderWidth: window?.innerWidth < 480 ? 1 : 1.5,
-      backgroundColor: "#fff",
-    },
-  },
-  layout: {
-    padding: {
-      top: window?.innerWidth < 480 ? 25 : window?.innerWidth < 768 ? 30 : 35,
-      right: window?.innerWidth < 480 ? 5 : window?.innerWidth < 768 ? 8 : 10,
-      bottom: window?.innerWidth < 480 ? 5 : window?.innerWidth < 768 ? 8 : 10,
-      left: window?.innerWidth < 480 ? 5 : window?.innerWidth < 768 ? 8 : 10,
-    },
-  },
-  interaction: {
-    intersect: false,
-    mode: "index",
-  },
-  hover: {
-    mode: "index",
-    intersect: false,
-  },
-  plugins: {
-    legend: {
-      display: false,
-    },
-  },
-  clip: false,
-};
-
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const metricData = {
   "Blood Pressure": {
-    activeData: [140, 122], // Active days data
-    inactiveData: [125, 130, 128, 135, 132], // Placeholder data for inactive days
+    activeData: [140, 122],
+    inactiveData: [125, 130, 128, 135, 132],
     label: "mmHg",
     gradient: ["rgba(255, 99, 132, 0.3)", "rgba(255, 99, 132, 0.02)"],
     borderColor: "rgb(255, 99, 132)",
@@ -270,6 +104,187 @@ function getPerformanceStatus(value) {
 }
 
 const AnalyticsChart = ({ selectedMetric }) => {
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: 1024,
+  });
+
+  useEffect(() => {
+    setWindowDimensions({
+      width: window.innerWidth,
+    });
+
+    const handleResize = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const getResponsiveValue = (mobile, tablet, desktop) => {
+    const width = windowDimensions.width;
+    if (width < 480) return mobile;
+    if (width < 768) return tablet;
+    return desktop;
+  };
+
+  const baseOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        backgroundColor: "rgba(0, 0, 0, 0.9)",
+        titleColor: "#fff",
+        bodyColor: "#fff",
+        padding: getResponsiveValue(6, 8, 12),
+        displayColors: false,
+        titleFont: {
+          size: getResponsiveValue(11, 12, 14),
+          weight: "600",
+          family: "'Space Grotesk', sans-serif",
+        },
+        bodyFont: {
+          size: getResponsiveValue(10, 11, 13),
+          family: "'Space Grotesk', sans-serif",
+        },
+        borderColor: "rgba(255, 255, 255, 0.15)",
+        borderWidth: getResponsiveValue(0.5, 1, 1),
+        cornerRadius: getResponsiveValue(4, 6, 6),
+        caretSize: getResponsiveValue(4, 6, 6),
+        caretPadding: getResponsiveValue(4, 6, 6),
+        boxPadding: getResponsiveValue(2, 3, 3),
+        callbacks: {
+          label: function (context) {
+            const metric = context.dataset.metric;
+            const value = context.parsed.y;
+
+            switch (metric) {
+              case "Blood Pressure":
+                const diastolic = Math.round(value * 0.65);
+                const bpStatus = getBPStatus(value);
+                return `${value}/${diastolic} mmHg (${bpStatus})`;
+
+              case "Sugar Level":
+                const sugarStatus = getSugarStatus(value);
+                return `${value} mg/dL (${sugarStatus})`;
+
+              case "Heart Rate":
+                const hrStatus = getHeartRateStatus(value);
+                return `${value} BPM (${hrStatus})`;
+
+              case "Performance":
+                const perfStatus = getPerformanceStatus(value);
+                return `${value}% (${perfStatus})`;
+
+              default:
+                return `${value} ${metricData[metric].label}`;
+            }
+          },
+          title: function (tooltipItems) {
+            return tooltipItems[0].label;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        min: metricData[selectedMetric].yAxisConfig.min,
+        max: metricData[selectedMetric].yAxisConfig.max,
+        position: "left",
+        grid: {
+          display: true,
+          color: "rgba(0, 0, 0, 0.04)",
+          drawBorder: false,
+          lineWidth: 1,
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          padding: getResponsiveValue(1, 2, 4),
+          color: "#666",
+          font: {
+            size: getResponsiveValue(9, 10, 11),
+            weight: "500",
+            family: "'Space Grotesk', sans-serif",
+          },
+          maxTicksLimit: getResponsiveValue(4, 5, 6),
+          align: "end",
+          labelOffset: -2,
+          stepSize: metricData[selectedMetric].yAxisConfig.stepSize,
+          callback: function (value) {
+            if (selectedMetric === "Blood Pressure") {
+              const diastolic = Math.round(value * 0.65);
+              return `${value}/${diastolic}`;
+            }
+            return value;
+          },
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+        border: {
+          display: false,
+        },
+        ticks: {
+          padding: getResponsiveValue(1, 2, 4),
+          color: "#666",
+          font: {
+            size: getResponsiveValue(9, 10, 11),
+            weight: "500",
+            family: "'Space Grotesk', sans-serif",
+          },
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkipPadding: getResponsiveValue(1, 2, 2),
+          maxTicksLimit: getResponsiveValue(4, 5, 7),
+        },
+        offset: false,
+        bounds: "data",
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.3,
+        borderWidth: getResponsiveValue(1.5, 2, 2.5),
+        capBezierPoints: true,
+      },
+      point: {
+        radius: getResponsiveValue(2.5, 3, 3.5),
+        hoverRadius: getResponsiveValue(4, 5, 6),
+        hitRadius: getResponsiveValue(5, 6, 8),
+        borderWidth: getResponsiveValue(1, 1.5, 2),
+        hoverBorderWidth: getResponsiveValue(1, 1.5, 1.5),
+        backgroundColor: "#fff",
+      },
+    },
+    layout: {
+      padding: {
+        top: getResponsiveValue(25, 30, 35),
+        right: getResponsiveValue(5, 8, 10),
+        bottom: getResponsiveValue(5, 8, 10),
+        left: getResponsiveValue(5, 8, 10),
+      },
+    },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
+    hover: {
+      mode: "index",
+      intersect: false,
+    },
+  };
+
   // Create arrays with null padding for proper positioning
   const activeDataArray = [
     ...metricData[selectedMetric].activeData,
@@ -284,7 +299,6 @@ const AnalyticsChart = ({ selectedMetric }) => {
     labels: days,
     datasets: [
       {
-        // Active days dataset
         fill: true,
         data: activeDataArray,
         borderColor: metricData[selectedMetric].borderColor,
@@ -316,7 +330,6 @@ const AnalyticsChart = ({ selectedMetric }) => {
         clip: false,
       },
       {
-        // Inactive days dataset
         fill: true,
         data: inactiveDataArray,
         borderColor: "rgba(200, 200, 200, 0.6)",
@@ -350,99 +363,9 @@ const AnalyticsChart = ({ selectedMetric }) => {
     ],
   };
 
-  const customOptions = {
-    ...options,
-    maintainAspectRatio: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-        backgroundColor: "rgba(0, 0, 0, 0.9)",
-        titleColor: "#fff",
-        bodyColor: "#fff",
-        padding:
-          window?.innerWidth < 480 ? 6 : window?.innerWidth < 768 ? 8 : 12,
-        displayColors: false,
-        titleFont: {
-          size:
-            window?.innerWidth < 480 ? 11 : window?.innerWidth < 768 ? 12 : 14,
-          weight: "600",
-          family: "'Space Grotesk', sans-serif",
-        },
-        bodyFont: {
-          size:
-            window?.innerWidth < 480 ? 10 : window?.innerWidth < 768 ? 11 : 13,
-          family: "'Space Grotesk', sans-serif",
-        },
-        borderColor: "rgba(255, 255, 255, 0.15)",
-        borderWidth: window?.innerWidth < 480 ? 0.5 : 1,
-        cornerRadius: window?.innerWidth < 480 ? 4 : 6,
-        caretSize: window?.innerWidth < 480 ? 4 : 6,
-        caretPadding: window?.innerWidth < 480 ? 4 : 6,
-        boxPadding: window?.innerWidth < 480 ? 2 : 3,
-        callbacks: {
-          label: function (context) {
-            // Check if this is from the inactive dataset
-            if (context.datasetIndex === 1) {
-              return "Inactive day";
-            }
-
-            const metric = context.dataset.metric;
-            const value = context.parsed.y;
-
-            switch (metric) {
-              case "Blood Pressure":
-                const diastolic = Math.round(value * 0.65);
-                const bpStatus = getBPStatus(value);
-                return `${value}/${diastolic} mmHg (${bpStatus})`;
-
-              case "Sugar Level":
-                const sugarStatus = getSugarStatus(value);
-                return `${value} mg/dL (${sugarStatus})`;
-
-              case "Heart Rate":
-                const hrStatus = getHeartRateStatus(value);
-                return `${value} BPM (${hrStatus})`;
-
-              case "Performance":
-                const perfStatus = getPerformanceStatus(value);
-                return `${value}% (${perfStatus})`;
-
-              default:
-                return `${value} ${metricData[metric].label}`;
-            }
-          },
-        },
-      },
-    },
-    scales: {
-      ...options.scales,
-      y: {
-        ...options.scales.y,
-        min: metricData[selectedMetric].yAxisConfig.min,
-        max: metricData[selectedMetric].yAxisConfig.max,
-        ticks: {
-          ...options.scales.y.ticks,
-          stepSize: metricData[selectedMetric].yAxisConfig.stepSize,
-          callback: function (value) {
-            if (selectedMetric === "Blood Pressure") {
-              const diastolic = Math.round(value * 0.65);
-              return `${value}/${diastolic}`;
-            }
-            return value;
-          },
-        },
-      },
-    },
-  };
-
   return (
     <div className="analytics-chart-container">
-      <Line options={customOptions} data={chartData} />
+      <Line options={baseOptions} data={chartData} />
     </div>
   );
 };
