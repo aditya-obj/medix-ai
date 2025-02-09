@@ -162,8 +162,13 @@ const AnalyticsChart = ({ selectedMetric }) => {
         boxPadding: getResponsiveValue(2, 3, 3),
         callbacks: {
           label: function (context) {
+            // Check if this is from the inactive dataset
+            if (context.datasetIndex === 1) {
+              return "Inactive day";
+            }
+
             const metric = context.dataset.metric;
-            const value = context.parsed.y;
+            const value = Math.round(context.parsed.y);
 
             switch (metric) {
               case "Blood Pressure":
@@ -208,20 +213,25 @@ const AnalyticsChart = ({ selectedMetric }) => {
           display: false,
         },
         ticks: {
-          padding: getResponsiveValue(1, 2, 4),
+          padding: getResponsiveValue(2, 3, 4),
           color: "#666",
           font: {
-            size: getResponsiveValue(9, 10, 11),
+            size: getResponsiveValue(9, 10, 12),
             weight: "500",
             family: "'Space Grotesk', sans-serif",
           },
-          maxTicksLimit: getResponsiveValue(4, 5, 6),
+          maxTicksLimit: 7,
           align: "end",
-          labelOffset: -2,
+          labelOffset: 0,
           stepSize: metricData[selectedMetric].yAxisConfig.stepSize,
           callback: function (value) {
+            // Round the value to remove decimals
+            value = Math.round(value);
             if (selectedMetric === "Blood Pressure") {
               const diastolic = Math.round(value * 0.65);
+              if (windowDimensions.width < 480) {
+                return value;
+              }
               return `${value}/${diastolic}`;
             }
             return value;
@@ -236,17 +246,17 @@ const AnalyticsChart = ({ selectedMetric }) => {
           display: false,
         },
         ticks: {
-          padding: getResponsiveValue(1, 2, 4),
+          padding: getResponsiveValue(2, 4, 8),
           color: "#666",
           font: {
-            size: getResponsiveValue(9, 10, 11),
+            size: getResponsiveValue(9, 10, 12),
             weight: "500",
             family: "'Space Grotesk', sans-serif",
           },
           maxRotation: 0,
           minRotation: 0,
-          autoSkipPadding: getResponsiveValue(1, 2, 2),
-          maxTicksLimit: getResponsiveValue(4, 5, 7),
+          autoSkipPadding: getResponsiveValue(8, 15, 40),
+          maxTicksLimit: 7,
         },
         offset: false,
         bounds: "data",
@@ -269,10 +279,10 @@ const AnalyticsChart = ({ selectedMetric }) => {
     },
     layout: {
       padding: {
-        top: getResponsiveValue(25, 30, 35),
-        right: getResponsiveValue(5, 8, 10),
-        bottom: getResponsiveValue(5, 8, 10),
-        left: getResponsiveValue(5, 8, 10),
+        top: getResponsiveValue(15, 20, 35),
+        right: getResponsiveValue(5, 8, 15),
+        bottom: getResponsiveValue(5, 8, 15),
+        left: getResponsiveValue(2, 4, 8),
       },
     },
     interaction: {
