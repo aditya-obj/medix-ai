@@ -3,6 +3,90 @@ import React, { useState, useEffect } from "react";
 import "@/app/styles/check.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { ref, get, set } from 'firebase/database';
+import { db } from '@/components/firebase.config';
+import { getAuth } from 'firebase/auth';
+
+    const GeminiPrompt = (formData) => {
+        return `
+        As a healthcare expert, please analyze the following patient data and provide a **comprehensive health assessment report** addressed directly to the patient.
+        
+        **Patient Profile:**
+        - Name: ${formData.name}
+        - Age: ${formData.age}
+        - Gender: ${formData.gender}
+        - Weight: ${formData.weight} kg
+        - Height: ${formData.height} cm
+        - Location: ${formData.location}
+        
+        **Lifestyle Factors:**
+        - Smoking: ${formData.smoking} ${formData.smoking === 'yes' ? `(${formData.cigarettesPerDay} cigarettes/day)` : ''}
+        - Alcohol Consumption: ${formData.alcohol} ${formData.alcohol === 'yes' ? `(${formData.drinksPerWeek} drinks/week)` : ''}
+        - Physical Activity: ${formData.physicalActivity} ${formData.physicalActivity === 'yes' ? `(${formData.hoursPerWeek} hours/week)` : ''}
+        - Sleep Duration: ${formData.sleepHours} hours/day
+        - Diet Type: ${formData.diet}
+        - **Water Intake:** ${formData.waterIntake} liters/day
+        
+        **Medical Information:**
+        - Blood Pressure: ${formData.bloodPressure}
+        - Heart Rate: ${formData.heartRate} bpm
+        - Blood Sugar Level: ${formData.sugarLevel}
+        - Existing Conditions: ${formData.disease || 'None'}
+        - Current Medications: ${formData.medication || 'None'}
+        - Allergies: ${formData.allergies || 'None'}
+        
+        **Family History:**
+        - Diabetes: ${formData.familyDiabetes}
+        - Hypertension: ${formData.familyHypertension}
+        - Cardiovascular Disease: ${formData.familyCardio}
+        - Genetic Conditions: ${formData.geneticCondition || 'None'}
+        
+        **Please generate a patient health report with the following structure:**
+        
+        **[Patient Health Report]**
+        - Start with a **personalized greeting**, addressing the patient by name.
+        - Clearly **explain their current health status** based on their metrics.
+        - Use **an easy-to-understand tone** that feels like a doctor or health coach is speaking to them directly.
+        
+        **Key Sections of the Report:**
+        
+        1. **Overall Health Score:** A score out of 500 based on health metrics (**Format:** 444)
+        2. **Health Percentile Ranking:** How healthy the patient is compared to the general population (**Format:** 92%)
+        3. **Health Overview:** A summary of their current health, highlighting strengths and areas of concern.
+        4. **Personalized Health Tips:** Practical recommendations to improve their well-being.
+        5. **Precautionary Measures:** Any necessary precautions based on their risk factors.
+        6. **Ways to Improve:** A plan for enhancing health metrics.
+        7. **Recommended Diet Plan:** A tailored nutrition guide based on their diet type and health conditions.
+        8. **Exercise Plan:** A customized fitness routine including:
+        - Frequency (days per week)
+        - Duration (minutes per session)
+        - Types of exercises (cardio, strength training, flexibility, etc.)
+        - Intensity level (low, moderate, high)
+        - Any modifications based on health conditions.
+        
+        **Important:**
+        - The report should be formatted **professionally and clearly**.
+        - Use **simple, encouraging language** to keep the patient engaged.
+        - End with a **positive note**, encouraging the patient to take actionable steps toward better health.
+        `;
+    };
+
+    const numPrompt = (result) => {
+        return `${result}
+    
+        Extract only the Health Score and Health Percentile Ranking from this report.
+        Return the result strictly in this format: score,percentile (e.g., 444,92).
+        
+        Do NOT include any extra text, spaces, or line breaks. Only return the numeric values in the exact format.
+        `;
+    };
+    
+
+    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  
+  
 
 const Page = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -18,6 +102,7 @@ const Page = () => {
     height: "",
     age: "",
     smoking: "no",
+    waterIntake: "",
     cigarettesPerDay: "",
     alcohol: "no",
     drinksPerWeek: "",
@@ -132,29 +217,23 @@ const Page = () => {
       setIsSubmitting(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log("Form submitted successfully:", {
-          name: formData.name,
-          age: formData.age,
-          gender: formData.gender,
-          smoking: formData.smoking,
-          cigarettesPerDay: formData.cigarettesPerDay,
-          alcohol: formData.alcohol,
-          drinksPerWeek: formData.drinksPerWeek,
-          physicalActivity: formData.physicalActivity,
-          hoursPerWeek: formData.hoursPerWeek,
-          sleepHours: formData.sleepHours,
-          diet: formData.diet,
-          bloodPressure: formData.bloodPressure,
-          heartRate: formData.heartRate,
-          sugarLevel: formData.sugarLevel,
-          disease: formData.disease,
-          medication: formData.medication,
-          allergies: formData.allergies,
-          familyDiabetes: formData.familyDiabetes,
-          familyHypertension: formData.familyHypertension,
-          familyCardio: formData.familyCardio,
-          geneticCondition: formData.geneticCondition,
-        });
+        
+        // Generate the prompt
+        const prompt = GeminiPrompt(formData);
+        console.log("Generated Prompt:", prompt);
+        
+        // Generate the initial report
+        const result = await model.generateContent(prompt);
+        const report = result.response.text();
+        
+        // Generate the numeric values
+        const numResult = await model.generateContent(numPrompt(report));
+        const [performance, healthPercentile] = numResult.response.text().split(",");
+
+        console.log("Performance:", performance);
+        console.log("Health Percentile:", healthPercentile);
+        console.log("Report:", report);
+
         toast.success(
           "Form submitted successfully! We'll analyze your health data.",
           {
