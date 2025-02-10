@@ -5,7 +5,6 @@ import { ref, get } from 'firebase/database';
 import SignUpProfile from '@/components/authentication/SignUpProfile';
 import '@/app/styles/home/home.css';
 import Assessment from '@/components/authentication/Assessment';
-import Statistic from '@/components/Statistic';
 import Link from 'next/link';
 import Image from 'next/image';
 import Login from '@/components/authentication/Login';
@@ -16,14 +15,6 @@ const Page = () => {
   const [username, setUsername] = useState('');
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLoginClick = () => {
-    setShowLogin(true);
-  };
-
-  const handleLoginClose = () => {
-    setShowLogin(false);
-  };
 
   useEffect(() => {
     const checkUsername = async () => {
@@ -74,45 +65,13 @@ const Page = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    auth.signOut();
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <main>
-      <nav className='navbar'>
-        <Link href="/" className="site-name">
-          Medix<span> AI</span>
-        </Link>
-        {isLoggedIn ? (
-          <div className="web-logout" onClick={handleLogout}>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '34px', height: '34px' }}>
-              <path d="M15 20H18C19.1046 20 20 19.1046 20 18M15 4H18C19.1046 4 20 4.89543 20 6V14M7 8L3 12L15 12M7 16L6 15" 
-                stroke="#000000" 
-                strokeWidth="1.5" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        ) : (
-          <div className="web-login" onClick={handleLoginClick}>Login</div>
-        )}
-      </nav>
-
-      {showLogin && (
-        <Login
-          onClose={handleLoginClose}
-          currentPath="/"
-          onLoginSuccess={() => {
-            // Handle successful login if needed
-          }}
-        />
-      )}
+      
 
       <div className="hero-section">
         <div className="hero-section-content">
@@ -133,7 +92,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <Statistic />
     </main>
   );
 }

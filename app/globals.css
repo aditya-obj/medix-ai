@@ -22,3 +22,7 @@
     --gray: #9b9b9b;
     --orange: #ff4000;
 }
+body {
+    margin-top: 50px;
+    background-color: var(--white);
+}

@@ -425,6 +425,7 @@
 .statistic-report-tag:hover {
   background-color: #e5e5e5d5;
   color: var(--black);
+  cursor: pointer;
 }
 .statistic-report-tag:hover::after {
   content: attr(title);

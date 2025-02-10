@@ -8,96 +8,96 @@ import { ref, get, set } from 'firebase/database';
 import { db } from '@/components/firebase.config';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/components/firebase.config';
 
-    const GeminiPrompt = (formData) => {
-        return `
-        As a healthcare expert, please analyze the following patient data and provide a **comprehensive health assessment report** addressed directly to the patient.
-        
-        **Patient Profile:**
-        - Name: ${formData.name}
-        - Age: ${formData.age}
-        - Gender: ${formData.gender}
-        - Weight: ${formData.weight} kg
-        - Height: ${formData.height} cm
-        - Location: ${formData.location}
-        
-        **Lifestyle Factors:**
-        - Smoking: ${formData.smoking} ${formData.smoking === 'yes' ? `(${formData.cigarettesPerDay} cigarettes/day)` : ''}
-        - Alcohol Consumption: ${formData.alcohol} ${formData.alcohol === 'yes' ? `(${formData.drinksPerWeek} drinks/week)` : ''}
-        - Physical Activity: ${formData.physicalActivity} ${formData.physicalActivity === 'yes' ? `(${formData.hoursPerWeek} hours/week)` : ''}
-        - Sleep Duration: ${formData.sleepHours} hours/day
-        - Diet Type: ${formData.diet}
-        - **Water Intake:** ${formData.waterIntake} liters/day
-        
-        **Medical Information:**
-        - Blood Pressure: ${formData.bloodPressure}
-        - Heart Rate: ${formData.heartRate} bpm
-        - Blood Sugar Level: ${formData.sugarLevel}
-        - Existing Conditions: ${formData.disease || 'None'}
-        - Current Medications: ${formData.medication || 'None'}
-        - Allergies: ${formData.allergies || 'None'}
-        
-        **Family History:**
-        - Diabetes: ${formData.familyDiabetes}
-        - Hypertension: ${formData.familyHypertension}
-        - Cardiovascular Disease: ${formData.familyCardio}
-        - Genetic Conditions: ${formData.geneticCondition || 'None'}
-        
-        **Please generate a patient health report with the following structure:**
-        
-        **[Patient Health Report]**
-        - Start with a **personalized greeting**, addressing the patient by name.
-        - Clearly **explain their current health status** based on their metrics.
-        - Use **an easy-to-understand tone** that feels like a doctor or health coach is speaking to them directly.
-        
-        **Key Sections of the Report:**
-        
-        1. **Overall Health Score:** A score out of 500 based on health metrics (**Format:** 444)
-        2. **Health Percentile Ranking:** How healthy the patient is compared to the general population (**Format:** 92%)
-        3. **Health Overview:** A summary of their current health, highlighting strengths and areas of concern.
-        4. **Personalized Health Tips:** Practical recommendations to improve their well-being.
-        5. **Precautionary Measures:** Any necessary precautions based on their risk factors.
-        6. **Ways to Improve:** A plan for enhancing health metrics.
-        7. **Recommended Diet Plan:** A tailored nutrition guide based on their diet type and health conditions.
-        8. **Exercise Plan:** A customized fitness routine including:
-        - Frequency (days per week)
-        - Duration (minutes per session)
-        - Types of exercises (cardio, strength training, flexibility, etc.)
-        - Intensity level (low, moderate, high)
-        - Any modifications based on health conditions.
-        9. **Protien Intake:** How much protein the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
-        10. **Fat Intake:** How much fat the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
-        11. **Carbs Intake:** How much carbs the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
-        
-        **Important:**
-        - The report should be formatted **professionally and clearly**.
-        - Use **simple, encouraging language** to keep the patient engaged.
-        - End with a **positive note**, encouraging the patient to take actionable steps toward better health.
-        `;
-    };
-
-    const numPrompt = (result) => {
-        return `${result}
+const GeminiPrompt = (formData) => {
+    return `
+    As a healthcare expert, please analyze the following patient data and provide a **comprehensive health assessment report** addressed directly to the patient.
     
-        Extract only the Health Score, Health Percentile Ranking, Protien Intake, Fat Intake, Carbs Intake from this report.
-        Return the result strictly in this format: score,percentile,protien,fat,carbs (e.g., 444,92,100,100,100).
-        
-        Do NOT include any extra text, spaces, or line breaks. Only return the numeric values in the exact format.
-        `;
-    };
+    **Patient Profile:**
+    - Name: ${formData.name}
+    - Age: ${formData.age}
+    - Gender: ${formData.gender}
+    - Weight: ${formData.weight} kg
+    - Height: ${formData.height} cm
+    - Location: ${formData.location}
     
+    **Lifestyle Factors:**
+    - Smoking: ${formData.smoking} ${formData.smoking === 'yes' ? `(${formData.cigarettesPerDay} cigarettes/day)` : ''}
+    - Alcohol Consumption: ${formData.alcohol} ${formData.alcohol === 'yes' ? `(${formData.drinksPerWeek} drinks/week)` : ''}
+    - Physical Activity: ${formData.physicalActivity} ${formData.physicalActivity === 'yes' ? `(${formData.hoursPerWeek} hours/week)` : ''}
+    - Sleep Duration: ${formData.sleepHours} hours/day
+    - Diet Type: ${formData.diet}
+    - **Water Intake:** ${formData.waterIntake} liters/day
+    
+    **Medical Information:**
+    - Blood Pressure: ${formData.bloodPressure}
+    - Heart Rate: ${formData.heartRate} bpm
+    - Blood Sugar Level: ${formData.sugarLevel}
+    - Existing Conditions: ${formData.disease || 'None'}
+    - Current Medications: ${formData.medication || 'None'}
+    - Allergies: ${formData.allergies || 'None'}
+    
+    **Family History:**
+    - Diabetes: ${formData.familyDiabetes}
+    - Hypertension: ${formData.familyHypertension}
+    - Cardiovascular Disease: ${formData.familyCardio}
+    - Genetic Conditions: ${formData.geneticCondition || 'None'}
+    
+    **Please generate a patient health report with the following structure:**
+    
+    **[Patient Health Report]**
+    - Start with a **personalized greeting**, addressing the patient by name.
+    - Clearly **explain their current health status** based on their metrics.
+    - Use **an easy-to-understand tone** that feels like a doctor or health coach is speaking to them directly.
+    
+    **Key Sections of the Report:**
+    
+    1. **Overall Health Score:** A score out of 500 based on health metrics (**Format:** 444)
+    2. **Health Percentile Ranking:** How healthy the patient is compared to the general population (**Format:** 92%)
+    3. **Health Overview:** A summary of their current health, highlighting strengths and areas of concern.
+    4. **Personalized Health Tips:** Practical recommendations to improve their well-being.
+    5. **Precautionary Measures:** Any necessary precautions based on their risk factors.
+    6. **Ways to Improve:** A plan for enhancing health metrics.
+    7. **Recommended Diet Plan:** A tailored nutrition guide based on their diet type and health conditions.
+    8. **Exercise Plan:** A customized fitness routine including:
+    - Frequency (days per week)
+    - Duration (minutes per session)
+    - Types of exercises (cardio, strength training, flexibility, etc.)
+    - Intensity level (low, moderate, high)
+    - Any modifications based on health conditions.
+    9. **Protien Intake:** How much protein the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
+    10. **Fat Intake:** How much fat the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
+    11. **Carbs Intake:** How much carbs the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
+    
+    **Important:**
+    - The report should be formatted **professionally and clearly**.
+    - Use **simple, encouraging language** to keep the patient engaged.
+    - End with a **positive note**, encouraging the patient to take actionable steps toward better health.
+    `;
+};
 
-    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-  
-  
+const numPrompt = (result) => {
+    return `${result}
 
-const Page = () => {
+    Extract only the Health Score, Health Percentile Ranking, Protien Intake, Fat Intake, Carbs Intake from this report.
+    Return the result strictly in this format: score,percentile,protien,fat,carbs (e.g., 444,92,100,100,100).
+    
+    Do NOT include any extra text, spaces, or line breaks. Only return the numeric values in the exact format.
+    `;
+};
+
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+const Check = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -128,6 +128,20 @@ const Page = () => {
   });
 
   const [validFields, setValidFields] = useState({});
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        // Redirect to home page if not authenticated
+        router.push('/');
+      } else {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -384,6 +398,14 @@ const Page = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return null; // Don't render anything while redirecting
+  }
 
   return (
     <>
@@ -1033,4 +1055,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Check;
