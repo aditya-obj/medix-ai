@@ -235,6 +235,17 @@ const Page = () => {
         // Get current timestamp
         const timestamp = Date.now();
 
+        // Update timestamps array
+        const timestampsRef = ref(db, `users/${uid}/timestamps`);
+        const timestampsSnapshot = await get(timestampsRef);
+        let timestamps = [];
+        
+        if (timestampsSnapshot.exists()) {
+          timestamps = timestampsSnapshot.val();
+        }
+        timestamps.push(timestamp);
+        await set(timestampsRef, timestamps);
+
         // Store personal data
         const personalRef = ref(db, `users/${uid}/personal`);
         const personalSnapshot = await get(personalRef);
@@ -313,7 +324,7 @@ const Page = () => {
           await set(ref(db, `users/${uid}/details/${key}/${timestamp}`), value);
         }
 
-        // Store only the latest report, replacing the old one
+        // Store only the latest report
         await set(ref(db, `users/${uid}/healthReport`), {
           report
         });

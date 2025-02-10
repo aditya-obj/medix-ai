@@ -4,6 +4,9 @@ import "@/app/styles/statistic.css";
 import PerformanceMeter from "./PerformanceMeter";
 import AnalyticsChart from "./AnalyticsChart";
 import Image from "next/image";
+import { getAuth } from 'firebase/auth';
+import { ref, get, set } from 'firebase/database';
+import { db } from '@/components/firebase.config';
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
@@ -36,6 +39,57 @@ const Statistic = () => {
     e.currentTarget.classList.add("active-tag");
 
     setSelectedMetric(e.currentTarget.textContent.trim());
+  };
+
+  const handleSaveReport = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const uid = user.uid;
+
+      // Get the latest timestamp
+      const timestampsRef = ref(db, `users/${uid}/timestamps`);
+      const timestampsSnapshot = await get(timestampsRef);
+      
+      if (!timestampsSnapshot.exists()) {
+        throw new Error('No timestamps found');
+      }
+
+      const timestamps = timestampsSnapshot.val();
+      const latestTimestamp = timestamps[timestamps.length - 1];
+
+      // Get the current health report
+      const healthReportRef = ref(db, `users/${uid}/healthReport`);
+      const healthReportSnapshot = await get(healthReportRef);
+      
+      if (!healthReportSnapshot.exists()) {
+        throw new Error('No health report found');
+      }
+
+      const healthReport = healthReportSnapshot.val();
+
+      // Save the report to the reports collection with the timestamp
+      await set(ref(db, `users/${uid}/reports/${latestTimestamp}`), {
+        report: healthReport.report,
+        timestamp: latestTimestamp
+      });
+
+      // Visual feedback for successful save
+      const saveBtn = document.querySelector('.save-btn');
+      saveBtn.classList.add('active');
+      setTimeout(() => {
+        saveBtn.classList.remove('active');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error saving report:', error);
+      // Add error handling UI feedback here if needed
+    }
   };
 
   return (
@@ -592,7 +646,10 @@ const Statistic = () => {
 
             <div className="statistic-report-footer">
               <div className="statistic-report-buttons">
-                <div className="statistic-report-button save-btn">
+                <div 
+                  className="statistic-report-button save-btn"
+                  onClick={handleSaveReport}
+                >
                   <svg
                     className="save"
                     viewBox="0 0 24 24"
