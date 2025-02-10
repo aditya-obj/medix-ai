@@ -98,6 +98,11 @@ const Check = () => {
   const totalSteps = 4;
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [readOnlyFields, setReadOnlyFields] = useState({
+    name: false,
+    gender: false,
+    location: false
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -130,6 +135,108 @@ const Check = () => {
   const [validFields, setValidFields] = useState({});
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          router.push('/');
+          return;
+        }
+
+        const uid = user.uid;
+        let hasExistingData = {
+          name: false,
+          gender: false,
+          location: false
+        };
+
+        // Initialize userData object
+        let userData = {};
+
+        // Fetch name
+        const nameRef = ref(db, `users/${uid}/name`);
+        const nameSnapshot = await get(nameRef);
+        if (nameSnapshot.exists()) {
+          userData.name = nameSnapshot.val();
+          hasExistingData.name = true;
+        }
+
+        // Fetch personal data
+        const personalRef = ref(db, `users/${uid}/personal`);
+        const personalSnapshot = await get(personalRef);
+        
+        if (personalSnapshot.exists()) {
+          const personalData = personalSnapshot.val();
+          if (personalData.gender) {
+            hasExistingData.gender = true;
+          }
+          if (personalData.location) {
+            hasExistingData.location = true;
+          }
+          userData = {
+            ...userData,
+            gender: personalData.gender || '',
+            location: personalData.location || '',
+            weight: personalData.weight || '',
+            height: personalData.height || '',
+            age: personalData.age || '',
+            smoking: personalData.smoking || 'no',
+            waterIntake: personalData.waterIntake || '',
+            cigarettesPerDay: personalData.cigarettesPerDay || '',
+            alcohol: personalData.alcohol || 'no',
+            drinksPerWeek: personalData.drinksPerWeek || '',
+            physicalActivity: personalData.physicalActivity || 'no',
+            hoursPerWeek: personalData.hoursPerWeek || '',
+            sleepHours: personalData.sleepHours || '',
+            diet: personalData.diet || 'veg',
+            disease: personalData.disease || '',
+            medication: personalData.medication || '',
+            allergies: personalData.allergies || '',
+          };
+        }
+
+        // Fetch family data
+        const familyRef = ref(db, `users/${uid}/family`);
+        const familySnapshot = await get(familyRef);
+
+        if (familySnapshot.exists()) {
+          const familyData = familySnapshot.val();
+          userData = {
+            ...userData,
+            familyDiabetes: familyData.familyDiabetes || 'no',
+            familyHypertension: familyData.familyHypertension || 'no',
+            familyCardio: familyData.familyCardio || 'no',
+            geneticCondition: familyData.geneticCondition || '',
+          };
+        }
+
+        // Update form data with fetched values
+        setFormData(prevData => ({
+          ...prevData,
+          ...userData
+        }));
+
+        // Validate pre-filled fields
+        Object.keys(userData).forEach(field => {
+          const isValid = validateField(field, userData[field]);
+          setValidFields(prev => ({
+            ...prev,
+            [field]: isValid
+          }));
+        });
+
+        // Set which fields should be read-only
+        setReadOnlyFields(hasExistingData);
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
+
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
         // Redirect to home page if not authenticated
@@ -152,14 +259,14 @@ const Check = () => {
 
     switch (step) {
       case 1:
-        if (!formData.name.trim()) newErrors.name = "Name is required";
-        if (!formData.gender) newErrors.gender = "Please select your gender";
-        if (!formData.location.trim())
-          newErrors.location = "Location is required";
-        if (!formData.weight) newErrors.weight = "Weight is required";
-        if (!formData.height) newErrors.height = "Height is required";
-        if (!formData.age) newErrors.age = "Age is required";
-        break;
+        const step1Fields = ["name", "gender", "location", "waterIntake", "weight", "height", "age"];
+        return step1Fields.every((field) => {
+          const isValid = validateField(field, formData[field]);
+          if (!isValid) {
+            newErrors[field] = `Please enter a valid ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
+          }
+          return isValid;
+        });
       case 2:
         if (formData.smoking === "yes" && !formData.cigarettesPerDay) {
           newErrors.cigarettesPerDay = "Please specify number of cigarettes";
@@ -193,6 +300,8 @@ const Check = () => {
         return value.trim().length > 0;
       case "location":
         return value.trim().length > 0;
+      case "waterIntake":
+        return value > 0 && value <= 10;
       case "weight":
         return value > 0;
       case "height":
@@ -448,16 +557,14 @@ const Check = () => {
                 </h2>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">Name</label>
+                    <label className="form-label">Name*</label>
                     <input
                       type="text"
                       name="name"
-                      className={`form-input ${errors.name ? "error" : ""} ${
-                        validFields.name ? "success" : ""
-                      }`}
+                      className={`form-input ${errors.name ? "error" : ""} ${readOnlyFields.name ? "readonly" : ""}`}
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Enter your full name"
+                      readOnly={readOnlyFields.name}
                     />
                     {errors.name && (
                       <span className="error-message">{errors.name}</span>
@@ -465,14 +572,13 @@ const Check = () => {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Gender</label>
+                    <label className="form-label">Gender*</label>
                     <select
                       name="gender"
-                      className={`form-input ${errors.gender ? "error" : ""} ${
-                        validFields.gender ? "success" : ""
-                      }`}
+                      className={`form-input ${errors.gender ? "error" : ""} ${readOnlyFields.gender ? "readonly" : ""}`}
                       value={formData.gender}
                       onChange={handleChange}
+                      disabled={readOnlyFields.gender}
                     >
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
@@ -485,19 +591,35 @@ const Check = () => {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Location</label>
+                    <label className="form-label">Location*</label>
                     <input
                       type="text"
                       name="location"
-                      className={`form-input ${
-                        errors.location ? "error" : ""
-                      } ${validFields.location ? "success" : ""}`}
+                      className={`form-input ${errors.location ? "error" : ""} ${readOnlyFields.location ? "readonly" : ""}`}
                       value={formData.location}
                       onChange={handleChange}
-                      placeholder="Enter your location"
+                      readOnly={readOnlyFields.location}
                     />
                     {errors.location && (
                       <span className="error-message">{errors.location}</span>
+                    )}
+                  </div>
+
+                  {/* Add Water Intake Input */}
+                  <div className="form-group">
+                    <label className="form-label">Water Intake (liters/day)*</label>
+                    <input
+                      type="number"
+                      name="waterIntake"
+                      className={`form-input ${errors.waterIntake ? "error" : ""}`}
+                      value={formData.waterIntake}
+                      onChange={handleChange}
+                      min="0"
+                      step="0.1"
+                      placeholder="Enter daily water intake"
+                    />
+                    {errors.waterIntake && (
+                      <span className="error-message">{errors.waterIntake}</span>
                     )}
                   </div>
 
