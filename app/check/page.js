@@ -132,7 +132,7 @@ const Page = () => {
       setIsSubmitting(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Form submitted successfully:', {
+        console.log("Form submitted successfully:", {
           name: formData.name,
           age: formData.age,
           gender: formData.gender,
@@ -169,7 +169,7 @@ const Page = () => {
           }
         );
       } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error("Error submitting form:", error);
         toast.error("Something went wrong. Please try again.", {
           position: "top-center",
           autoClose: 3000,
@@ -814,11 +814,15 @@ const Page = () => {
                     Previous
                   </button>
                   <button
-                    type="button"
+                    type="submit"
                     className="nav-button next-button"
-                    onClick={nextStep}
+                    disabled={isSubmitting}
                   >
-                    Next
+                    {isSubmitting ? (
+                      <span>Submitting...</span>
+                    ) : (
+                      <span>Submit</span>
+                    )}
                   </button>
                 </div>
               </div>
