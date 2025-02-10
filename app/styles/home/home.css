@@ -38,6 +38,9 @@
 .web-logout svg {
     transform: rotate(180deg);
 }
+.web-logout:hover {
+    cursor: pointer;
+}
 
 .web-login:hover {
     transform: translateY(-3px);

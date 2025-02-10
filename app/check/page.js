@@ -216,24 +216,109 @@ const Page = () => {
     if (validateStep(currentStep)) {
       setIsSubmitting(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const auth = getAuth();
+        const user = auth.currentUser;
         
-        // Generate the prompt
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+
+        const uid = user.uid;
+        
+        // Generate and process Gemini content first
         const prompt = GeminiPrompt(formData);
-        console.log("Generated Prompt:", prompt);
-        
-        // Generate the initial report
         const result = await model.generateContent(prompt);
         const report = result.response.text();
-        
-        // Generate the numeric values
         const numResult = await model.generateContent(numPrompt(report));
         const [performance, healthPercentile] = numResult.response.text().split(",");
 
-        console.log("Performance:", performance);
-        console.log("Health Percentile:", healthPercentile);
-        console.log("Report:", report);
+        // Get current timestamp
+        const timestamp = Date.now();
 
+        // Store personal data
+        const personalRef = ref(db, `users/${uid}/personal`);
+        const personalSnapshot = await get(personalRef);
+        const personalData = {
+          gender: formData.gender,
+          location: formData.location,
+          weight: formData.weight,
+          height: formData.height,
+          age: formData.age,
+          smoking: formData.smoking,
+          waterIntake: formData.waterIntake,
+          cigarettesPerDay: formData.cigarettesPerDay,
+          alcohol: formData.alcohol,
+          drinksPerWeek: formData.drinksPerWeek,
+          physicalPerWeek: formData.hoursPerWeek,
+          sleepHours: formData.sleepHours,
+          diet: formData.diet,
+          disease: formData.disease,
+          medication: formData.medication,
+          allergies: formData.allergies,
+        };
+
+        // Only update changed fields for personal data
+        if (personalSnapshot.exists()) {
+          const currentData = personalSnapshot.val();
+          const updates = {};
+          Object.entries(personalData).forEach(([key, value]) => {
+            if (currentData[key] !== value) {
+              updates[key] = value;
+            }
+          });
+          if (Object.keys(updates).length > 0) {
+            await set(personalRef, { ...currentData, ...updates });
+          }
+        } else {
+          await set(personalRef, personalData);
+        }
+
+        // Store family data
+        const familyRef = ref(db, `users/${uid}/family`);
+        const familySnapshot = await get(familyRef);
+        const familyData = {
+          familyDiabetes: formData.familyDiabetes,
+          familyHypertension: formData.familyHypertension,
+          familyCardio: formData.familyCardio,
+          geneticCondition: formData.geneticCondition,
+        };
+
+        // Only update changed fields for family data
+        if (familySnapshot.exists()) {
+          const currentData = familySnapshot.val();
+          const updates = {};
+          Object.entries(familyData).forEach(([key, value]) => {
+            if (currentData[key] !== value) {
+              updates[key] = value;
+            }
+          });
+          if (Object.keys(updates).length > 0) {
+            await set(familyRef, { ...currentData, ...updates });
+          }
+        } else {
+          await set(familyRef, familyData);
+        }
+
+        // Store details with timestamp
+        const detailsData = {
+          bloodPressure: formData.bloodPressure,
+          heartRate: formData.heartRate,
+          sugarLevel: formData.sugarLevel,
+          performance: performance,
+          healthPercentile: healthPercentile
+        };
+
+        // Store each detail with timestamp
+        for (const [key, value] of Object.entries(detailsData)) {
+          await set(ref(db, `users/${uid}/details/${key}/${timestamp}`), value);
+        }
+
+        // Store only the latest report, replacing the old one
+        await set(ref(db, `users/${uid}/healthReport`), {
+          report
+        });
+
+        console.log("Data successfully stored in Firebase");
         toast.success(
           "Form submitted successfully! We'll analyze your health data.",
           {
