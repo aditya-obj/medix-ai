@@ -15,6 +15,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
   const [showLogin, setShowLogin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLoginClick = () => {
     setShowLogin(true);
@@ -44,6 +45,7 @@ const Page = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         checkUsername();
+        setIsLoggedIn(true);
         const displayName = user.displayName;
         const email = user.email;
         if (displayName) {
@@ -58,6 +60,7 @@ const Page = () => {
         setUsername('null');
         setLoading(false);
         setShowSignUpProfile(false);
+        setIsLoggedIn(false);
       }
     });
 
@@ -71,6 +74,10 @@ const Page = () => {
     };
   }, []);
 
+  const handleLogout = () => {
+    auth.signOut();
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -81,7 +88,20 @@ const Page = () => {
         <Link href="/" className="site-name">
           Medix<span> AI</span>
         </Link>
-        <div className="web-login" onClick={handleLoginClick}>Login</div>
+        {isLoggedIn ? (
+          <div className="web-logout" onClick={handleLogout}>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '34px', height: '34px' }}>
+              <path d="M15 20H18C19.1046 20 20 19.1046 20 18M15 4H18C19.1046 4 20 4.89543 20 6V14M7 8L3 12L15 12M7 16L6 15" 
+                stroke="#000000" 
+                strokeWidth="1.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        ) : (
+          <div className="web-login" onClick={handleLoginClick}>Login</div>
+        )}
       </nav>
 
       {showLogin && (

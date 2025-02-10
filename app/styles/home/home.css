@@ -35,6 +35,9 @@
     transform: translateY(0);
     transition: all 0.5s ease;
 }
+.web-logout svg {
+    transform: rotate(180deg);
+}
 
 .web-login:hover {
     transform: translateY(-3px);
