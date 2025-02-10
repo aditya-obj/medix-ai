@@ -40,7 +40,6 @@ const Page = () => {
   const [validFields, setValidFields] = useState({});
 
   useEffect(() => {
-    // Smooth scroll to top when step changes
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
@@ -76,7 +75,6 @@ const Page = () => {
         if (!formData.sugarLevel)
           newErrors.sugarLevel = "Sugar level is required";
         break;
-      // Case 4 has no required fields
     }
 
     setErrors(newErrors);
@@ -117,12 +115,10 @@ const Page = () => {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
 
-    // Validate field and set success state
     const isValid = validateField(name, value);
     setValidFields((prev) => ({
       ...prev,
@@ -135,7 +131,6 @@ const Page = () => {
     if (validateStep(currentStep)) {
       setIsSubmitting(true);
       try {
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
         toast.success(
           "Form submitted successfully! We'll analyze your health data.",
