@@ -50,6 +50,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
 .statistic-heartRate::after {
   top: 0;
@@ -416,14 +417,29 @@
   height: 30px;
   border-radius: 40px;
   border: 1.5px solid #e5e5e5a5;
-
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
 }
 .statistic-report-tag:hover {
   background-color: #e5e5e5d5;
   color: var(--black);
+}
+.statistic-report-tag:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-top: 4px;
 }
 
 .statistic-analytics {
@@ -754,4 +770,43 @@
   .statistic-analytics-diet {
     min-width: 100%;
   }
+}
+
+.statistic-heartRate.show-change::after {
+  content: attr(data-change);
+  position: absolute;
+  top: -12px;
+  right: -20px;
+  background-color: var(--orange);
+  padding: 2px 6px;
+  border-radius: 19px;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statistic-Sugar.show-change::after {
+  content: attr(data-change);
+  position: absolute;
+  top: -12px;
+  right: -20px;
+  background-color: var(--orange);
+  padding: 2px 6px;
+  border-radius: 19px;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statistic-bloodPressure.show-change::after {
+  content: attr(data-change);
+  position: absolute;
+  top: -12px;
+  right: -20px;
+  background-color: var(--orange);
+  padding: 2px 6px;
+  border-radius: 19px;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 500;
 }

@@ -7,6 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ref, get, set } from 'firebase/database';
 import { db } from '@/components/firebase.config';
 import { getAuth } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
     const GeminiPrompt = (formData) => {
         return `
@@ -64,6 +65,9 @@ import { getAuth } from 'firebase/auth';
         - Types of exercises (cardio, strength training, flexibility, etc.)
         - Intensity level (low, moderate, high)
         - Any modifications based on health conditions.
+        9. **Protien Intake:** How much protein the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
+        10. **Fat Intake:** How much fat the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
+        11. **Carbs Intake:** How much carbs the patient should consume based on their weight and activity level in grams, don't give it in range give it in exact value (**Format:** 100)
         
         **Important:**
         - The report should be formatted **professionally and clearly**.
@@ -75,8 +79,8 @@ import { getAuth } from 'firebase/auth';
     const numPrompt = (result) => {
         return `${result}
     
-        Extract only the Health Score and Health Percentile Ranking from this report.
-        Return the result strictly in this format: score,percentile (e.g., 444,92).
+        Extract only the Health Score, Health Percentile Ranking, Protien Intake, Fat Intake, Carbs Intake from this report.
+        Return the result strictly in this format: score,percentile,protien,fat,carbs (e.g., 444,92,100,100,100).
         
         Do NOT include any extra text, spaces, or line breaks. Only return the numeric values in the exact format.
         `;
@@ -93,6 +97,7 @@ const Page = () => {
   const totalSteps = 4;
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -230,7 +235,7 @@ const Page = () => {
         const result = await model.generateContent(prompt);
         const report = result.response.text();
         const numResult = await model.generateContent(numPrompt(report));
-        const [performance, healthPercentile] = numResult.response.text().split(",");
+        const [performance, healthPercentile, protien, fat, carbs] = numResult.response.text().split(",");
 
         // Get current timestamp
         const timestamp = Date.now();
@@ -316,7 +321,10 @@ const Page = () => {
           heartRate: formData.heartRate,
           sugarLevel: formData.sugarLevel,
           performance: performance,
-          healthPercentile: healthPercentile
+          healthPercentile: healthPercentile,
+          protien: protien,
+          fat: fat,
+          carbs: carbs
         };
 
         // Store each detail with timestamp
@@ -334,13 +342,16 @@ const Page = () => {
           "Form submitted successfully! We'll analyze your health data.",
           {
             position: "top-center",
-            autoClose: 3000,
+            autoClose: 1500,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
             theme: "light",
+            onClose: () => {
+              router.push('/analysis');
+            }
           }
         );
       } catch (error) {

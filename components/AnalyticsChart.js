@@ -25,57 +25,6 @@ ChartJS.register(
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const metricData = {
-  "Blood Pressure": {
-    activeData: [140, 122],
-    inactiveData: [125, 130, 128, 135, 132],
-    label: "mmHg",
-    gradient: ["rgba(255, 99, 132, 0.3)", "rgba(255, 99, 132, 0.02)"],
-    borderColor: "rgb(255, 99, 132)",
-    yAxisConfig: {
-      min: 90,
-      max: 140,
-      stepSize: 10,
-    },
-  },
-  "Sugar Level": {
-    activeData: [85, 92],
-    inactiveData: [88, 90, 87, 89, 86],
-    label: "mg/dL",
-    gradient: ["rgba(75, 192, 192, 0.3)", "rgba(75, 192, 192, 0.02)"],
-    borderColor: "rgb(75, 192, 192)",
-    yAxisConfig: {
-      min: 60,
-      max: 120,
-      stepSize: 10,
-    },
-  },
-  "Heart Rate": {
-    activeData: [72, 75],
-    inactiveData: [73, 74, 71, 76, 73],
-    label: "BPM",
-    gradient: ["rgba(54, 162, 235, 0.3)", "rgba(54, 162, 235, 0.02)"],
-    borderColor: "rgb(54, 162, 235)",
-    yAxisConfig: {
-      min: 50,
-      max: 100,
-      stepSize: 10,
-    },
-  },
-  Performance: {
-    activeData: [75, 82],
-    inactiveData: [78, 80, 77, 81, 79],
-    label: "%",
-    gradient: ["rgba(153, 102, 255, 0.3)", "rgba(153, 102, 255, 0.02)"],
-    borderColor: "rgb(153, 102, 255)",
-    yAxisConfig: {
-      min: 50,
-      max: 100,
-      stepSize: 10,
-    },
-  },
-};
-
 function getBPStatus(systolic) {
   if (systolic < 90) return "Low";
   if (systolic <= 120) return "Normal";
@@ -103,10 +52,62 @@ function getPerformanceStatus(value) {
   return "Needs Improvement";
 }
 
-const AnalyticsChart = ({ selectedMetric }) => {
+const AnalyticsChart = ({ selectedMetric, chartData }) => {
   const [windowDimensions, setWindowDimensions] = useState({
     width: 1024,
   });
+
+  // Move metricData to the top of the component
+  const metricData = {
+    "Blood Pressure": {
+      activeData: chartData.bp || [],
+      inactiveData: [125, 130, 128, 135, 132],
+      label: "mmHg",
+      gradient: ["rgba(255, 99, 132, 0.3)", "rgba(255, 99, 132, 0.02)"],
+      borderColor: "rgb(255, 99, 132)",
+      yAxisConfig: {
+        min: 90,
+        max: 140,
+        stepSize: 10,
+      },
+    },
+    "Sugar Level": {
+      activeData: chartData.sugar || [],
+      inactiveData: [88, 90, 87, 89, 86],
+      label: "mg/dL",
+      gradient: ["rgba(75, 192, 192, 0.3)", "rgba(75, 192, 192, 0.02)"],
+      borderColor: "rgb(75, 192, 192)",
+      yAxisConfig: {
+        min: 60,
+        max: 120,
+        stepSize: 10,
+      },
+    },
+    "Heart Rate": {
+      activeData: chartData.hr || [],
+      inactiveData: [73, 74, 71, 76, 73],
+      label: "BPM",
+      gradient: ["rgba(54, 162, 235, 0.3)", "rgba(54, 162, 235, 0.02)"],
+      borderColor: "rgb(54, 162, 235)",
+      yAxisConfig: {
+        min: 50,
+        max: 100,
+        stepSize: 10,
+      },
+    },
+    Performance: {
+      activeData: chartData.performance || [],
+      inactiveData: [78, 80, 77, 81, 79],
+      label: "%",
+      gradient: ["rgba(153, 102, 255, 0.3)", "rgba(153, 102, 255, 0.02)"],
+      borderColor: "rgb(153, 102, 255)",
+      yAxisConfig: {
+        min: 50,
+        max: 100,
+        stepSize: 10,
+      },
+    },
+  };
 
   useEffect(() => {
     setWindowDimensions({
@@ -130,6 +131,22 @@ const AnalyticsChart = ({ selectedMetric }) => {
     return desktop;
   };
 
+  const getSelectedData = () => {
+    switch (selectedMetric) {
+      case "Blood Pressure":
+        return chartData.bp;
+      case "Heart Rate":
+        return chartData.hr;
+      case "Sugar Level":
+        return chartData.sugar;
+      case "Performance":
+        return chartData.performance;
+      default:
+        return [];
+    }
+  };
+
+  // Move baseOptions after metricData definition
   const baseOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -305,7 +322,7 @@ const AnalyticsChart = ({ selectedMetric }) => {
     ...metricData[selectedMetric].inactiveData,
   ];
 
-  const chartData = {
+  const chartConfig = {
     labels: days,
     datasets: [
       {
@@ -375,7 +392,7 @@ const AnalyticsChart = ({ selectedMetric }) => {
 
   return (
     <div className="analytics-chart-container">
-      <Line options={baseOptions} data={chartData} />
+      <Line options={baseOptions} data={chartConfig} />
     </div>
   );
 };
