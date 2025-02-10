@@ -132,6 +132,29 @@ const Page = () => {
       setIsSubmitting(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
+        console.log('Form submitted successfully:', {
+          name: formData.name,
+          age: formData.age,
+          gender: formData.gender,
+          smoking: formData.smoking,
+          cigarettesPerDay: formData.cigarettesPerDay,
+          alcohol: formData.alcohol,
+          drinksPerWeek: formData.drinksPerWeek,
+          physicalActivity: formData.physicalActivity,
+          hoursPerWeek: formData.hoursPerWeek,
+          sleepHours: formData.sleepHours,
+          diet: formData.diet,
+          bloodPressure: formData.bloodPressure,
+          heartRate: formData.heartRate,
+          sugarLevel: formData.sugarLevel,
+          disease: formData.disease,
+          medication: formData.medication,
+          allergies: formData.allergies,
+          familyDiabetes: formData.familyDiabetes,
+          familyHypertension: formData.familyHypertension,
+          familyCardio: formData.familyCardio,
+          geneticCondition: formData.geneticCondition,
+        });
         toast.success(
           "Form submitted successfully! We'll analyze your health data.",
           {
@@ -146,6 +169,7 @@ const Page = () => {
           }
         );
       } catch (error) {
+        console.error('Error submitting form:', error);
         toast.error("Something went wrong. Please try again.", {
           position: "top-center",
           autoClose: 3000,
