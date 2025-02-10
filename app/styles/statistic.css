@@ -799,15 +799,22 @@
   font-weight: 500;
 }
 
+.statistic-bloodPressure.show-change {
+  position: relative;
+}
+
 .statistic-bloodPressure.show-change::after {
   content: attr(data-change);
   position: absolute;
-  top: -12px;
-  right: -20px;
+  top: 0;
+  right: 0;
   background-color: var(--orange);
   padding: 2px 6px;
   border-radius: 19px;
   color: var(--white);
   font-size: 12px;
   font-weight: 500;
+  margin-left: -65px;
+  margin-top: -24px;
+  white-space: nowrap;
 }

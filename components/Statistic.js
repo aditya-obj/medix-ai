@@ -4,9 +4,9 @@ import "@/app/styles/statistic.css";
 import PerformanceMeter from "./PerformanceMeter";
 import AnalyticsChart from "./AnalyticsChart";
 import Image from "next/image";
-import { getAuth } from 'firebase/auth';
-import { ref, get, set } from 'firebase/database';
-import { db } from '@/components/firebase.config';
+import { getAuth } from "firebase/auth";
+import { ref, get, set } from "firebase/database";
+import { db } from "@/components/firebase.config";
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
@@ -39,123 +39,167 @@ const Statistic = () => {
     hr: [],
     sugar: [],
     performance: [],
-    healthPercentile: []
+    healthPercentile: [],
   });
 
   const [performanceIncrease, setPerformanceIncrease] = useState(null);
-  const [lastCheckupTime, setLastCheckupTime] = useState('');
+  const [lastCheckupTime, setLastCheckupTime] = useState("");
   const [healthPercentile, setHealthPercentile] = useState(null);
   const [dietInfo, setDietInfo] = useState({
     protein: 0,
     fat: 0,
-    carbs: 0
+    carbs: 0,
   });
 
   const [dateDisplay, setDateDisplay] = useState({
-    date: '',
-    time: ''
+    date: "",
+    time: "",
   });
   const [isHovered, setIsHovered] = useState(false);
   const [metrics, setMetrics] = useState({
     heartRate: {
       change: 0,
-      showChange: false
+      showChange: false,
     },
     bloodPressure: {
       change: 0,
-      showChange: false
+      showChange: false,
     },
     sugarLevel: {
       change: 0,
-      showChange: false
-    }
+      showChange: false,
+    },
   });
+
+  // Normal values for each metric
+  const normalValues = {
+    bloodPressure: 120, // Normal systolic blood pressure
+    heartRate: 80, // Normal heart rate
+    sugarLevel: 100, // Normal blood sugar level
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const auth = getAuth();
         const user = auth.currentUser;
-        
+
         if (!user) {
-          console.error('User not authenticated');
+          console.error("User not authenticated");
           return;
         }
 
         const uid = user.uid;
-        let lastTimestamp; // Declare lastTimestamp at the top level of the function
 
         // Fetch timestamps first to get the last checkup time
         const timestampsRef = ref(db, `users/${uid}/timestamps`);
         const timestampsSnapshot = await get(timestampsRef);
-        
+
         if (timestampsSnapshot.exists()) {
           const timestamps = timestampsSnapshot.val();
-          lastTimestamp = timestamps[timestamps.length - 1]; // Assign value to lastTimestamp
-          
+          const lastTimestamp = timestamps[timestamps.length - 1];
+
           // Convert timestamp to formatted date and time
           const date = new Date(lastTimestamp);
-          const formattedDate = date.toLocaleDateString('en-GB');
-          const formattedTime = date.toLocaleTimeString('en-GB', { 
-            hour: '2-digit', 
-            minute: '2-digit'
+          const formattedDate = date.toLocaleDateString("en-GB");
+          const formattedTime = date.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
           });
-          
+
           setDateDisplay({
             date: formattedDate,
-            time: formattedTime
+            time: formattedTime,
           });
         }
 
-        // Fetch name
+        // Fetch name and personal data (unchanged)
         const nameRef = ref(db, `users/${uid}/name`);
         const nameSnapshot = await get(nameRef);
-        
-        // Fetch personal data
         const personalRef = ref(db, `users/${uid}/personal`);
         const personalSnapshot = await get(personalRef);
-        
+
         if (personalSnapshot.exists() || nameSnapshot.exists()) {
           const personalData = personalSnapshot.val() || {};
           const name = nameSnapshot.val();
-          setFormData(prevData => ({
+          setFormData((prevData) => ({
             ...prevData,
             ...personalData,
-            name: name || user.displayName || 'User'  // Priority: Firebase name > displayName > 'User'
+            name: name || user.displayName || "User",
           }));
         }
 
-        // Fetch details data
+        // Fetch and process details data with timestamp handling
         const detailsRef = ref(db, `users/${uid}/details`);
         const detailsSnapshot = await get(detailsRef);
-        
+
         if (detailsSnapshot.exists()) {
           const detailsData = detailsSnapshot.val();
-          
-          // Convert details object to arrays
+
+          // Helper function to process daily data
+          const processDailyData = (data) => {
+            if (!data) return [];
+
+            // Convert timestamps to dates and group by date
+            const dailyGroups = Object.entries(data).reduce(
+              (acc, [timestamp, value]) => {
+                const date = new Date(parseInt(timestamp)).toLocaleDateString(
+                  "en-GB"
+                );
+                if (!acc[date]) {
+                  acc[date] = { timestamp: parseInt(timestamp), value };
+                } else if (parseInt(timestamp) > acc[date].timestamp) {
+                  // Update only if current timestamp is more recent
+                  acc[date] = { timestamp: parseInt(timestamp), value };
+                }
+                return acc;
+              },
+              {}
+            );
+
+            // Convert to array and sort by date
+            return Object.values(dailyGroups)
+              .sort((a, b) => a.timestamp - b.timestamp)
+              .map((item) => item.value)
+              .slice(-7); // Get last 7 days of data
+          };
+
+          // Process each metric
           const processedDetails = {
-            bp: Object.values(detailsData.bloodPressure || {}),
-            hr: Object.values(detailsData.heartRate || {}),
-            sugar: Object.values(detailsData.sugarLevel || {}),
-            performance: Object.values(detailsData.performance || {}),
-            healthPercentile: Object.values(detailsData.healthPercentile || {})
+            bp: processDailyData(detailsData.bloodPressure),
+            hr: processDailyData(detailsData.heartRate),
+            sugar: processDailyData(detailsData.sugarLevel),
+            performance: processDailyData(detailsData.performance),
+            healthPercentile: processDailyData(detailsData.healthPercentile),
           };
 
           setDetails(processedDetails);
 
           // Set health percentile
           if (processedDetails.healthPercentile.length > 0) {
-            const lastPercentile = processedDetails.healthPercentile[processedDetails.healthPercentile.length - 1];
-            setHealthPercentile(lastPercentile);
+            setHealthPercentile(
+              processedDetails.healthPercentile[
+                processedDetails.healthPercentile.length - 1
+              ]
+            );
           }
 
           // Calculate performance increase percentage
           if (processedDetails.performance.length >= 2) {
-            const currentPerformance = processedDetails.performance[processedDetails.performance.length - 1];
-            const previousPerformance = processedDetails.performance[processedDetails.performance.length - 2];
-            
+            const currentPerformance =
+              processedDetails.performance[
+                processedDetails.performance.length - 1
+              ];
+            const previousPerformance =
+              processedDetails.performance[
+                processedDetails.performance.length - 2
+              ];
+
             if (currentPerformance > previousPerformance) {
-              const increase = ((currentPerformance - previousPerformance) / previousPerformance) * 100;
+              const increase =
+                ((currentPerformance - previousPerformance) /
+                  previousPerformance) *
+                100;
               setPerformanceIncrease(Math.round(increase));
             } else {
               setPerformanceIncrease(null);
@@ -164,106 +208,82 @@ const Statistic = () => {
 
           // Set the latest performance score
           if (processedDetails.performance.length > 0) {
-            setPerformanceScore(processedDetails.performance[processedDetails.performance.length - 1]);
+            setPerformanceScore(
+              processedDetails.performance[
+                processedDetails.performance.length - 1
+              ]
+            );
           }
 
-          // Set the latest values for display
-          if (processedDetails.bp.length > 0) {
-            setFormData(prev => ({ 
-              ...prev, 
-              bloodPressure: processedDetails.bp[processedDetails.bp.length - 1] 
-            }));
-          }
-          if (processedDetails.hr.length > 0) {
-            setFormData(prev => ({ 
-              ...prev, 
-              heartRate: processedDetails.hr[processedDetails.hr.length - 1] 
-            }));
-          }
-          if (processedDetails.sugar.length > 0) {
-            setFormData(prev => ({ 
-              ...prev, 
-              sugarLevel: processedDetails.sugar[processedDetails.sugar.length - 1] 
-            }));
-          }
+          // Set the latest values and calculate metrics changes
+          const setLatestValueAndChange = (metric, values, normalValue) => {
+            if (values.length > 0) {
+              const currentValue = values[values.length - 1];
+              setFormData((prev) => ({ ...prev, [metric]: currentValue }));
 
-          // Calculate changes for metrics
-          if (processedDetails.hr.length >= 2) {
-            const currentHR = processedDetails.hr[processedDetails.hr.length - 1];
-            const previousHR = processedDetails.hr[processedDetails.hr.length - 2];
-            const normalHR = 80;
-            
-            // Only show change if current value is outside normal range
-            if (currentHR > normalHR || currentHR < normalHR) {
-              const hrChange = ((currentHR - previousHR) / previousHR) * 100;
-              setMetrics(prev => ({
-                ...prev,
-                heartRate: {
-                  change: Math.round(hrChange),
-                  showChange: true
-                }
-              }));
+              // Extract systolic value if it's blood pressure
+              const currentNumericValue =
+                metric === "bloodPressure" && typeof currentValue === "string"
+                  ? parseInt(currentValue.split("/")[0])
+                  : currentValue;
+
+              if (currentNumericValue) {
+                const percentDiff =
+                  ((currentNumericValue - normalValue) / normalValue) * 100;
+                setMetrics((prev) => ({
+                  ...prev,
+                  [metric]: {
+                    change: Math.round(percentDiff),
+                    showChange: true,
+                  },
+                }));
+              }
             }
-          }
+          };
 
-          if (processedDetails.bp.length >= 2) {
-            const currentBP = processedDetails.bp[processedDetails.bp.length - 1];
-            const previousBP = processedDetails.bp[processedDetails.bp.length - 2];
-            const normalBP = 120;
-            
-            // Only show change if current value is outside normal range
-            if (currentBP > normalBP || currentBP < normalBP) {
-              const bpChange = ((currentBP - previousBP) / previousBP) * 100;
-              setMetrics(prev => ({
-                ...prev,
-                bloodPressure: {
-                  change: Math.round(bpChange),
-                  showChange: true
-                }
-              }));
-            }
-          }
-
-          if (processedDetails.sugar.length >= 2) {
-            const currentSugar = processedDetails.sugar[processedDetails.sugar.length - 1];
-            const previousSugar = processedDetails.sugar[processedDetails.sugar.length - 2];
-            const normalSugar = 120;
-            
-            // Only show change if current value is outside normal range
-            if (currentSugar > normalSugar || currentSugar < normalSugar) {
-              const sugarChange = ((currentSugar - previousSugar) / previousSugar) * 100;
-              setMetrics(prev => ({
-                ...prev,
-                sugarLevel: {
-                  change: Math.round(sugarChange),
-                  showChange: true
-                }
-              }));
-            }
-          }
+          setLatestValueAndChange(
+            "bloodPressure",
+            processedDetails.bp,
+            normalValues.bloodPressure
+          );
+          setLatestValueAndChange(
+            "heartRate",
+            processedDetails.hr,
+            normalValues.heartRate
+          );
+          setLatestValueAndChange(
+            "sugarLevel",
+            processedDetails.sugar,
+            normalValues.sugarLevel
+          );
         }
 
-        // Only fetch diet info if we have a lastTimestamp
-        if (lastTimestamp) {
-          const proteinRef = ref(db, `users/${uid}/details/protien/${lastTimestamp}`);
-          const fatRef = ref(db, `users/${uid}/details/fat/${lastTimestamp}`);
-          const carbsRef = ref(db, `users/${uid}/details/carbs/${lastTimestamp}`);
+        // Fetch diet info for the latest timestamp
+        if (timestampsSnapshot.exists()) {
+          const timestamps = timestampsSnapshot.val();
+          const lastTimestamp = timestamps[timestamps.length - 1];
 
-          const [proteinSnapshot, fatSnapshot, carbsSnapshot] = await Promise.all([
-            get(proteinRef),
-            get(fatRef),
-            get(carbsRef)
-          ]);
+          const proteinRef = ref(
+            db,
+            `users/${uid}/details/protien/${lastTimestamp}`
+          );
+          const fatRef = ref(db, `users/${uid}/details/fat/${lastTimestamp}`);
+          const carbsRef = ref(
+            db,
+            `users/${uid}/details/carbs/${lastTimestamp}`
+          );
+
+          const [proteinSnapshot, fatSnapshot, carbsSnapshot] =
+            await Promise.all([get(proteinRef), get(fatRef), get(carbsRef)]);
 
           setDietInfo({
             protein: proteinSnapshot.exists() ? proteinSnapshot.val() : 0,
             fat: fatSnapshot.exists() ? fatSnapshot.val() : 0,
-            carbs: carbsSnapshot.exists() ? carbsSnapshot.val() : 0
+            carbs: carbsSnapshot.exists() ? carbsSnapshot.val() : 0,
           });
         }
-
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -298,9 +318,9 @@ const Statistic = () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
-      
+
       if (!user) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
 
       const uid = user.uid;
@@ -308,9 +328,9 @@ const Statistic = () => {
       // Get the latest timestamp
       const timestampsRef = ref(db, `users/${uid}/timestamps`);
       const timestampsSnapshot = await get(timestampsRef);
-      
+
       if (!timestampsSnapshot.exists()) {
-        throw new Error('No timestamps found');
+        throw new Error("No timestamps found");
       }
 
       const timestamps = timestampsSnapshot.val();
@@ -319,9 +339,9 @@ const Statistic = () => {
       // Get the current health report
       const healthReportRef = ref(db, `users/${uid}/healthReport`);
       const healthReportSnapshot = await get(healthReportRef);
-      
+
       if (!healthReportSnapshot.exists()) {
-        throw new Error('No health report found');
+        throw new Error("No health report found");
       }
 
       const healthReport = healthReportSnapshot.val();
@@ -329,18 +349,17 @@ const Statistic = () => {
       // Save the report to the reports collection with the timestamp
       await set(ref(db, `users/${uid}/reports/${latestTimestamp}`), {
         report: healthReport.report,
-        timestamp: latestTimestamp
+        timestamp: latestTimestamp,
       });
 
       // Visual feedback for successful save
-      const saveBtn = document.querySelector('.save-btn');
-      saveBtn.classList.add('active');
+      const saveBtn = document.querySelector(".save-btn");
+      saveBtn.classList.add("active");
       setTimeout(() => {
-        saveBtn.classList.remove('active');
+        saveBtn.classList.remove("active");
       }, 2000);
-
     } catch (error) {
-      console.error('Error saving report:', error);
+      console.error("Error saving report:", error);
       // Add error handling UI feedback here if needed
     }
   };
@@ -357,7 +376,7 @@ const Statistic = () => {
       bp: getLastNElements(details.bp, 7),
       hr: getLastNElements(details.hr, 7),
       sugar: getLastNElements(details.sugar, 7),
-      performance: getLastNElements(details.performance, 7)
+      performance: getLastNElements(details.performance, 7),
     };
   };
 
@@ -366,39 +385,81 @@ const Statistic = () => {
       <div className="statistic-title-container">
         <div className="statistic-title">Your Statistic</div>
         <div className="statistic-title-content">
-          <div className="statistic-bloodPressure">
+          <div
+            className={`statistic-bloodPressure ${
+              metrics.bloodPressure.showChange ? "show-change" : ""
+            }`}
+            data-change={
+              metrics.bloodPressure.change > 0
+                ? `+${metrics.bloodPressure.change}%`
+                : `${metrics.bloodPressure.change}%`
+            }
+          >
             <div className="statistic-title-icon">
-              <Image src="/svg/bloodPressure.svg" alt="bloodPressure" width={24} height={24} />
+              <Image
+                src="/svg/bloodPressure.svg"
+                alt="bloodPressure"
+                width={24}
+                height={24}
+              />
             </div>
             <div className="statistic-title-content-text">
               <div className="statistic-title-content-heading">
-                {formData.bloodPressure || 'N/A'}
+                {formData.bloodPressure || "N/A"}
               </div>
               <div className="statistic-title-content-subHeading">
                 Blood Pressure (mmHg)
               </div>
             </div>
           </div>
-          <div className={`statistic-heartRate ${metrics.heartRate.showChange ? 'show-change' : ''}`} data-change={metrics.heartRate.change > 0 ? `+${metrics.heartRate.change}%` : `${metrics.heartRate.change}%`}>
+          <div
+            className={`statistic-heartRate ${
+              metrics.heartRate.showChange ? "show-change" : ""
+            }`}
+            data-change={
+              metrics.heartRate.change > 0
+                ? `+${metrics.heartRate.change}%`
+                : `${metrics.heartRate.change}%`
+            }
+          >
             <div className="statistic-title-icon">
-              <Image src="/svg/heartRate.svg" alt="heartRate" width={24} height={24} />
+              <Image
+                src="/svg/heartRate.svg"
+                alt="heartRate"
+                width={24}
+                height={24}
+              />
             </div>
             <div className="statistic-title-content-text">
               <div className="statistic-title-content-heading">
-                {formData.heartRate || 'N/A'}
+                {formData.heartRate || "N/A"}
               </div>
               <div className="statistic-title-content-subHeading">
                 Heart Rate (Bpm)
               </div>
             </div>
           </div>
-          <div className={`statistic-Sugar ${metrics.sugarLevel.showChange ? 'show-change' : ''}`} data-change={metrics.sugarLevel.change > 0 ? `+${metrics.sugarLevel.change}%` : `${metrics.sugarLevel.change}%`}>
+          <div
+            className={`statistic-Sugar ${
+              metrics.sugarLevel.showChange ? "show-change" : ""
+            }`}
+            data-change={
+              metrics.sugarLevel.change > 0
+                ? `+${metrics.sugarLevel.change}%`
+                : `${metrics.sugarLevel.change}%`
+            }
+          >
             <div className="statistic-title-icon">
-              <Image src="/svg/sugarLevel.svg" alt="sugarLevel" width={24} height={24} />
+              <Image
+                src="/svg/sugarLevel.svg"
+                alt="sugarLevel"
+                width={24}
+                height={24}
+              />
             </div>
             <div className="statistic-title-content-text">
               <div className="statistic-title-content-heading">
-                {formData.sugarLevel || 'N/A'}
+                {formData.sugarLevel || "N/A"}
               </div>
               <div className="statistic-title-content-subHeading">
                 Sugar Level (mg/dL)
@@ -607,7 +668,9 @@ const Statistic = () => {
                 </div>
                 Place
               </div>
-              <div className="statistic-personalInfo-content">{formData.location}</div>
+              <div className="statistic-personalInfo-content">
+                {formData.location}
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -637,7 +700,9 @@ const Statistic = () => {
                 </div>
                 Age
               </div>
-              <div className="statistic-personalInfo-content">{formData.age}</div>
+              <div className="statistic-personalInfo-content">
+                {formData.age}
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -663,7 +728,9 @@ const Statistic = () => {
                 </div>
                 Gender
               </div>
-              <div className="statistic-personalInfo-content">{formData.gender}</div>
+              <div className="statistic-personalInfo-content">
+                {formData.gender}
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -693,14 +760,18 @@ const Statistic = () => {
                 </div>
                 Weight
               </div>
-              <div className="statistic-personalInfo-content">{formData.weight} kg</div>
+              <div className="statistic-personalInfo-content">
+                {formData.weight} kg
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
                 <div className="statistic-personalInfo-title-icon"></div>
                 Height
               </div>
-              <div className="statistic-personalInfo-content">{formData.height} cm</div>
+              <div className="statistic-personalInfo-content">
+                {formData.height} cm
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -761,21 +832,27 @@ const Statistic = () => {
                 <div className="statistic-personalInfo-title-icon"></div>
                 Smoke
               </div>
-              <div className="statistic-personalInfo-content">{formData.cigarettesPerDay} Cigarettes/Day</div>
+              <div className="statistic-personalInfo-content">
+                {formData.cigarettesPerDay} Cigarettes/Day
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
                 <div className="statistic-personalInfo-title-icon"></div>
                 Alcohol
               </div>
-              <div className="statistic-personalInfo-content">{formData.drinksPerWeek} Drinks/Week</div>
+              <div className="statistic-personalInfo-content">
+                {formData.drinksPerWeek} Drinks/Week
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
                 <div className="statistic-personalInfo-title-icon"></div>
                 Physical Acitivity
               </div>
-              <div className="statistic-personalInfo-content">{formData.physicalPerWeek} Hrs/Week</div>
+              <div className="statistic-personalInfo-content">
+                {formData.physicalPerWeek} Hrs/Week
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -803,7 +880,9 @@ const Statistic = () => {
                 </div>
                 Diet
               </div>
-              <div className="statistic-personalInfo-content">{formData.diet}</div>
+              <div className="statistic-personalInfo-content">
+                {formData.diet}
+              </div>
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
@@ -847,7 +926,9 @@ const Statistic = () => {
                 </div>
                 Sleep
               </div>
-              <div className="statistic-personalInfo-content">{formData.sleepHours} Hrs</div>
+              <div className="statistic-personalInfo-content">
+                {formData.sleepHours} Hrs
+              </div>
             </div>
           </div>
         </div>
@@ -913,25 +994,29 @@ const Statistic = () => {
                   <path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm80 168c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm-160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm194.8 170.2C334.3 380.4 292.5 400 248 400s-86.3-19.6-114.8-53.8c-13.6-16.3 11-36.7 24.6-20.5 22.4 26.9 55.2 42.2 90.2 42.2s67.8-15.4 90.2-42.2c13.4-16.2 38.1 4.2 24.6 20.5z"></path>
                 </g>
               </svg>
-              <span>You're healthier than {healthPercentile || '0'}% people</span>
+              <span>
+                You're healthier than {healthPercentile || "0"}% people
+              </span>
             </div>
           </div>
 
           <div className="statistic-report-container">
             <div className="statistic-report-header">
               <div className="statistic-report-title">Your Report</div>
-              <div 
+              <div
                 className="statistic-report-tag"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
-                {isHovered ? dateDisplay.time : dateDisplay.date || 'No Checkup'}
+                {isHovered
+                  ? dateDisplay.time
+                  : dateDisplay.date || "No Checkup"}
               </div>
             </div>
 
             <div className="statistic-report-footer">
               <div className="statistic-report-buttons">
-                <div 
+                <div
                   className="statistic-report-button save-btn"
                   onClick={handleSaveReport}
                 >
@@ -1067,8 +1152,8 @@ const Statistic = () => {
           </div>
 
           <div className="statistic-analytics-chart">
-            <AnalyticsChart 
-              selectedMetric={selectedMetric} 
+            <AnalyticsChart
+              selectedMetric={selectedMetric}
               chartData={getChartData()}
             />
           </div>
@@ -1115,7 +1200,8 @@ const Statistic = () => {
               <div className="statistic-analytics-diet-content">
                 <div className="statistic-analytics-diet-title">Protein</div>
                 <div className="statistic-analytics-diet-text">
-                  {dietInfo.protein}<span> gram</span>
+                  {dietInfo.protein}
+                  <span> gram</span>
                 </div>
               </div>
             </div>
@@ -1146,7 +1232,8 @@ const Statistic = () => {
               <div className="statistic-analytics-diet-content">
                 <div className="statistic-analytics-diet-title">Fat</div>
                 <div className="statistic-analytics-diet-text">
-                  {dietInfo.fat}<span> gram</span>
+                  {dietInfo.fat}
+                  <span> gram</span>
                 </div>
               </div>
             </div>
@@ -1177,7 +1264,8 @@ const Statistic = () => {
               <div className="statistic-analytics-diet-content">
                 <div className="statistic-analytics-diet-title">Carbs</div>
                 <div className="statistic-analytics-diet-text">
-                  {dietInfo.carbs}<span> gram</span>
+                  {dietInfo.carbs}
+                  <span> gram</span>
                 </div>
               </div>
             </div>
