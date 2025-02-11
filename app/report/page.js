@@ -8,7 +8,354 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import { IoArrowBack } from "react-icons/io5";
+import { FaRegCalendarAlt, FaDownload } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { pdf } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
+import { htmlToText } from "html-to-text";
 import "@/app/styles/report.css";
+
+// Register fonts for PDF
+Font.register({
+  family: "Roboto",
+  src: "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf",
+});
+
+Font.register({
+  family: "RobotoBold",
+  src: "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf",
+});
+
+// PDF styles
+const pdfStyles = StyleSheet.create({
+  page: {
+    padding: 40,
+    fontFamily: "Roboto",
+    fontSize: 11,
+    lineHeight: 1.5,
+  },
+  header: {
+    marginBottom: 20,
+    borderBottom: "2pt solid #3182ce",
+    paddingBottom: 10,
+  },
+  headerLogo: {
+    fontSize: 24,
+    fontFamily: "RobotoBold",
+    color: "#3182ce",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 8,
+    color: "#2d3748",
+    textAlign: "center",
+    fontFamily: "RobotoBold",
+  },
+  date: {
+    fontSize: 10,
+    color: "#4a5568",
+    textAlign: "right",
+    marginTop: 8,
+  },
+  content: {
+    flex: 1,
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontFamily: "RobotoBold",
+    marginBottom: 8,
+    color: "#2c5282",
+    backgroundColor: "#f7fafc",
+    padding: "6 10",
+    borderRadius: 4,
+  },
+  scoreSection: {
+    marginVertical: 15,
+    backgroundColor: "#f8fafc",
+    padding: 12,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  scoreRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+    paddingVertical: 3,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+    paddingHorizontal: 4,
+  },
+  scoreLabel: {
+    flex: 1,
+    color: "#4a5568",
+    fontSize: 12,
+    fontFamily: "RobotoBold",
+  },
+  scoreValue: {
+    flex: 1,
+    textAlign: "right",
+    fontFamily: "RobotoBold",
+    color: "#3182ce",
+    fontSize: 12,
+  },
+  paragraph: {
+    marginBottom: 8,
+    textAlign: "justify",
+    color: "#2d3748",
+  },
+  listItem: {
+    flexDirection: "row",
+    marginBottom: 4,
+    paddingLeft: 15,
+  },
+  bullet: {
+    width: 10,
+    fontSize: 11,
+  },
+  listItemContent: {
+    flex: 1,
+    paddingLeft: 5,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 20,
+    left: 40,
+    right: 40,
+    borderTop: "1pt solid #e2e8f0",
+    paddingTop: 10,
+  },
+  footerText: {
+    fontSize: 9,
+    color: "#718096",
+    textAlign: "center",
+  },
+  patientInfo: {
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: "#f7fafc",
+    borderRadius: 4,
+  },
+  patientInfoRow: {
+    flexDirection: "row",
+    marginBottom: 4,
+  },
+  patientInfoLabel: {
+    width: "30%",
+    color: "#4a5568",
+    fontSize: 10,
+    fontFamily: "RobotoBold",
+  },
+  patientInfoValue: {
+    flex: 1,
+    color: "#2d3748",
+    fontSize: 10,
+  },
+});
+
+// PDF Document Component
+const PDFDocument = ({ report, date }) => {
+  // Parse the report content to extract sections
+  const parseReport = (content) => {
+    const sections = {};
+    let currentSection = "";
+    let currentContent = [];
+    let introText = [];
+    let isIntro = false;
+
+    const lines = content
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line && !line.match(/^[-_\s]*$/)); // Remove empty lines and separator lines
+
+    lines.forEach((line) => {
+      if (line.startsWith("Dear")) {
+        sections["greeting"] = line;
+        isIntro = true;
+      } else if (line.startsWith("**") && line.endsWith("**")) {
+        if (isIntro && introText.length > 0) {
+          sections["introduction"] = introText;
+          isIntro = false;
+        }
+        if (currentSection && currentContent.length > 0) {
+          sections[currentSection] = currentContent;
+        }
+        currentSection = line.replace(/\*\*/g, "").trim();
+        currentContent = [];
+      } else if (isIntro) {
+        const cleanLine = line.replace(/\*/g, "").trim();
+        if (cleanLine && !cleanLine.match(/^Patient Health Report$/i)) {
+          introText.push(cleanLine);
+        }
+      } else if (currentSection) {
+        const cleanLine = line.replace(/\*/g, "").trim();
+        if (cleanLine) {
+          currentContent.push(cleanLine);
+        }
+      }
+    });
+
+    // Save the last section
+    if (currentSection && currentContent.length > 0) {
+      sections[currentSection] = currentContent;
+    }
+    // Save intro if we have any remaining
+    if (isIntro && introText.length > 0) {
+      sections["introduction"] = introText;
+    }
+
+    return sections;
+  };
+
+  const sections = parseReport(report);
+
+  return (
+    <Document>
+      <Page size="A4" style={pdfStyles.page}>
+        <View style={pdfStyles.header}>
+          <Text style={pdfStyles.headerLogo}>MEDIX</Text>
+          <Text style={pdfStyles.title}>Health Assessment Report</Text>
+          <Text style={pdfStyles.date}>{date}</Text>
+        </View>
+
+        <View style={pdfStyles.content}>
+          {/* Greeting and Introduction */}
+          {sections.greeting && (
+            <View style={[pdfStyles.section, { marginBottom: 10 }]}>
+              <Text style={[pdfStyles.paragraph, { fontFamily: "RobotoBold" }]}>
+                {sections.greeting}
+              </Text>
+            </View>
+          )}
+
+          {sections.introduction && sections.introduction.length > 0 && (
+            <View style={[pdfStyles.section, { marginBottom: 20 }]}>
+              {sections.introduction.map((para, index) => (
+                <Text key={index} style={pdfStyles.paragraph}>
+                  {para}
+                </Text>
+              ))}
+            </View>
+          )}
+
+          {/* Health Scores */}
+          {(sections["1. Overall Health Score"] ||
+            sections["2. Health Percentile Ranking"]) && (
+            <View style={pdfStyles.scoreSection}>
+              {sections["1. Overall Health Score"] &&
+                sections["1. Overall Health Score"].length > 0 && (
+                  <View style={pdfStyles.scoreRow}>
+                    <Text style={pdfStyles.scoreLabel}>
+                      Overall Health Score
+                    </Text>
+                    <Text style={pdfStyles.scoreValue}>
+                      {sections["1. Overall Health Score"][0].replace(
+                        /[^\d/]/g,
+                        ""
+                      )}
+                    </Text>
+                  </View>
+                )}
+              {sections["2. Health Percentile Ranking"] &&
+                sections["2. Health Percentile Ranking"].length > 0 && (
+                  <View style={pdfStyles.scoreRow}>
+                    <Text style={pdfStyles.scoreLabel}>Health Percentile</Text>
+                    <Text style={pdfStyles.scoreValue}>
+                      {sections["2. Health Percentile Ranking"][0].replace(
+                        /[^\d%]/g,
+                        ""
+                      )}
+                    </Text>
+                  </View>
+                )}
+            </View>
+          )}
+
+          {/* Health Overview */}
+          {sections["3. Health Overview"] &&
+            sections["3. Health Overview"].length > 0 && (
+              <View style={pdfStyles.section}>
+                <Text style={pdfStyles.sectionTitle}>Health Overview</Text>
+                {sections["3. Health Overview"].map((paragraph, index) => (
+                  <Text key={index} style={pdfStyles.paragraph}>
+                    {paragraph}
+                  </Text>
+                ))}
+              </View>
+            )}
+
+          {/* Other Sections */}
+          {Object.entries(sections).map(([title, content]) => {
+            if (
+              ![
+                "greeting",
+                "introduction",
+                "Patient Health Report",
+                "1. Overall Health Score",
+                "2. Health Percentile Ranking",
+                "3. Health Overview",
+              ].includes(title) &&
+              Array.isArray(content) &&
+              content.length > 0
+            ) {
+              const sectionTitle = title.replace(/^\d+\.\s/, "");
+              return (
+                <View style={pdfStyles.section} key={title}>
+                  <Text style={pdfStyles.sectionTitle}>{sectionTitle}</Text>
+                  {content.map((item, index) => {
+                    if (item.includes(":")) {
+                      const [label, value] = item.split(":");
+                      return (
+                        <View style={pdfStyles.scoreRow} key={index}>
+                          <Text style={pdfStyles.scoreLabel}>
+                            {label.trim()}
+                          </Text>
+                          <Text
+                            style={[pdfStyles.scoreValue, { color: "#2d3748" }]}
+                          >
+                            {value.trim()}
+                          </Text>
+                        </View>
+                      );
+                    } else {
+                      return (
+                        <Text key={index} style={pdfStyles.paragraph}>
+                          {item}
+                        </Text>
+                      );
+                    }
+                  })}
+                </View>
+              );
+            }
+          })}
+        </View>
+
+        <View style={pdfStyles.footer}>
+          <Text style={pdfStyles.footerText}>
+            Generated by Medix - Your Trusted Health Companion
+          </Text>
+          <Text style={[pdfStyles.footerText, { marginTop: 4 }]}>
+            Report Generated on: {date}
+          </Text>
+        </View>
+      </Page>
+    </Document>
+  );
+};
 
 const Report = () => {
   const [reports, setReports] = useState([]);
@@ -65,6 +412,32 @@ const Report = () => {
     });
   };
 
+  const downloadPDF = async () => {
+    if (!selectedReport) return;
+
+    try {
+      const blob = await pdf(
+        <PDFDocument
+          report={selectedReport.report}
+          date={formatDate(selectedReport.timestamp)}
+        />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Medix_Health_Report_${formatDate(
+        selectedReport.timestamp
+      ).replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="report-loading">
@@ -80,70 +453,115 @@ const Report = () => {
         <div className="report-empty-icon">📋</div>
         <h2>No Reports Found</h2>
         <p>You haven't saved any health reports yet.</p>
-        <button
-          onClick={() => router.push("/check")}
-          className="report-empty-button"
-        >
-          Get Your Health Report
-        </button>
+        <div className="report-empty-buttons">
+          <button
+            onClick={() => router.push("/check")}
+            className="report-empty-button"
+          >
+            Get Your Health Report
+          </button>
+          <button
+            onClick={() => router.push("/analysis")}
+            className="report-empty-button secondary"
+          >
+            Back to Analysis
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="report-container">
-      <div className="report-sidebar">
-        <h2>Your Reports</h2>
-        <div className="report-list">
-          {reports.map((report) => (
-            <div
-              key={report.timestamp}
-              className={`report-item ${
-                selectedReport?.timestamp === report.timestamp ? "active" : ""
-              }`}
-              onClick={() => setSelectedReport(report)}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="report-container"
+    >
+      <button onClick={() => router.push("/analysis")} className="back-button">
+        <IoArrowBack /> Back to Analysis
+      </button>
+
+      <div className="report-content-wrapper">
+        <div className="report-sidebar">
+          <h2>Your Reports</h2>
+          <div className="report-list">
+            {reports.map((report) => (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                key={report.timestamp}
+                className={`report-item ${
+                  selectedReport?.timestamp === report.timestamp ? "active" : ""
+                }`}
+                onClick={() => setSelectedReport(report)}
+              >
+                <div className="report-item-content">
+                  <div className="report-item-left">
+                    <div className="report-item-date">
+                      <FaRegCalendarAlt className="calendar-icon" />
+                      {formatDate(report.timestamp)}
+                    </div>
+                    <div className="report-item-status">
+                      {selectedReport?.timestamp === report.timestamp
+                        ? "Current Report"
+                        : "Click to view"}
+                    </div>
+                  </div>
+                  <div className="report-item-icon">
+                    {selectedReport?.timestamp === report.timestamp
+                      ? "📄"
+                      : "📑"}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className="report-content">
+          {selectedReport ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <div className="report-item-date">
-                {formatDate(report.timestamp)}
+              <div className="report-header">
+                <div className="report-header-left">
+                  <h1>Health Report</h1>
+                  <div className="report-date">
+                    <FaRegCalendarAlt className="calendar-icon" />
+                    {formatDate(selectedReport.timestamp)}
+                  </div>
+                </div>
+                <button onClick={downloadPDF} className="download-button">
+                  <FaDownload /> Download PDF
+                </button>
               </div>
-              <div className="report-item-icon">
-                {selectedReport?.timestamp === report.timestamp ? "📄" : "📑"}
+              <div className="report-body">
+                {typeof selectedReport.report === "string" ? (
+                  <ReactMarkdown
+                    className="markdown-content"
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                  >
+                    {selectedReport.report}
+                  </ReactMarkdown>
+                ) : (
+                  <p className="report-error">
+                    Report content is not available
+                  </p>
+                )}
               </div>
+            </motion.div>
+          ) : (
+            <div className="report-no-selection">
+              <p>Select a report from the sidebar to view its contents</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
-
-      <div className="report-content">
-        {selectedReport ? (
-          <>
-            <div className="report-header">
-              <h1>Health Report</h1>
-              <div className="report-date">
-                {formatDate(selectedReport.timestamp)}
-              </div>
-            </div>
-            <div className="report-body">
-              {typeof selectedReport.report === "string" ? (
-                <ReactMarkdown
-                  className="markdown-content"
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
-                >
-                  {selectedReport.report}
-                </ReactMarkdown>
-              ) : (
-                <p className="report-error">Report content is not available</p>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="report-no-selection">
-            <p>Select a report from the sidebar to view its contents</p>
-          </div>
-        )}
-      </div>
-    </div>
+    </motion.div>
   );
 };
 
