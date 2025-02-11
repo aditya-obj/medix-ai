@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getAuth } from "firebase/auth";
 import { ref, get, set } from "firebase/database";
 import { db } from "@/components/firebase.config";
+import { useRouter } from "next/navigation";
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
@@ -77,6 +78,8 @@ const Statistic = () => {
     heartRate: 80, // Normal heart rate
     sugarLevel: 100, // Normal blood sugar level
   };
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -1067,7 +1070,10 @@ const Statistic = () => {
                     </g>
                   </svg>
                 </div>
-                <div className="statistic-report-button link-btn">
+                <div
+                  className="statistic-report-button link-btn"
+                  onClick={() => router.push("/report")}
+                >
                   <svg
                     className="link"
                     viewBox="0 0 24 24"

@@ -1,0 +1,373 @@
+.report-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+  gap: 20px;
+}
+
+.report-sidebar {
+  flex: 0 0 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-sidebar h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.report-item:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.report-item.active {
+  background: #007bff;
+  color: white;
+}
+
+.report-item-date {
+  font-size: 0.9rem;
+}
+
+.report-item-icon {
+  font-size: 1.2rem;
+}
+
+.report-content {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.report-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+}
+
+.report-date {
+  color: #666;
+  font-size: 1rem;
+}
+
+.report-body {
+  color: #444;
+  line-height: 1.6;
+}
+
+.report-section-title {
+  color: #007bff;
+  margin: 30px 0 15px 0;
+  font-size: 1.3rem;
+}
+
+.report-list-item {
+  margin: 10px 0;
+  padding-left: 20px;
+  list-style-type: none;
+  position: relative;
+}
+
+.report-list-item::before {
+  content: "•";
+  color: #007bff;
+  position: absolute;
+  left: 0;
+}
+
+.report-paragraph {
+  margin: 15px 0;
+}
+
+.report-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.report-loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.report-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+  text-align: center;
+  padding: 20px;
+}
+
+.report-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.report-empty h2 {
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.report-empty p {
+  color: #666;
+  margin: 0 0 30px 0;
+}
+
+.report-empty-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.report-empty-button:hover {
+  background: #0056b3;
+}
+
+.report-no-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .report-container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .report-sidebar {
+    flex: none;
+    width: 100%;
+  }
+
+  .report-content {
+    padding: 20px;
+  }
+
+  .report-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .report-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-item {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .report-section-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Markdown Styles */
+.markdown-content {
+  color: #2d3748;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.markdown-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+  color: #1a365d;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem;
+  color: #2c5282;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+  color: #2b6cb0;
+}
+
+.markdown-content p {
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.markdown-content li {
+  margin: 0.5rem 0;
+}
+
+.markdown-content a {
+  color: #3182ce;
+  text-decoration: none;
+  border-bottom: 1px solid #3182ce;
+  transition: all 0.2s ease;
+}
+
+.markdown-content a:hover {
+  color: #2c5282;
+  border-bottom-color: #2c5282;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #4299e1;
+  margin: 1.5rem 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  background: #ebf8ff;
+  color: #2c5282;
+  font-style: italic;
+}
+
+.markdown-content code {
+  background: #edf2f7;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.markdown-content pre {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.markdown-content pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.markdown-content th {
+  background: #f7fafc;
+  font-weight: 600;
+}
+
+.markdown-content tr:nth-child(even) {
+  background: #f7fafc;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 2px solid #e2e8f0;
+  margin: 2rem 0;
+}
+
+/* Responsive adjustments for markdown */
+@media (max-width: 768px) {
+  .markdown-content {
+    font-size: 1rem;
+  }
+
+  .markdown-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .markdown-content h2 {
+    font-size: 1.35rem;
+  }
+
+  .markdown-content h3 {
+    font-size: 1.15rem;
+  }
+}
