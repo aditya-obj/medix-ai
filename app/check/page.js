@@ -334,7 +334,8 @@ const Check = () => {
       case "heartRate":
         return value > 0;
       case "sugarLevel":
-        return value > 0;
+        const sugarValue = parseFloat(value);
+        return sugarValue >= 80 && sugarValue <= 120;
       default:
         return true;
     }
@@ -994,13 +995,37 @@ const Check = () => {
                       name="sugarLevel"
                       className={`form-input ${
                         errors.sugarLevel ? "error" : ""
+                      } ${
+                        formData.sugarLevel &&
+                        validateField("sugarLevel", formData.sugarLevel)
+                          ? "normal-range"
+                          : formData.sugarLevel
+                          ? "out-of-range"
+                          : ""
                       }`}
                       value={formData.sugarLevel}
                       onChange={handleChange}
-                      placeholder="80/120"
+                      placeholder="80/120 (normal range)"
                     />
                     {errors.sugarLevel && (
                       <span className="error-message">{errors.sugarLevel}</span>
+                    )}
+                    {formData.sugarLevel && !errors.sugarLevel && (
+                      <span
+                        className={`range-indicator ${
+                          validateField("sugarLevel", formData.sugarLevel)
+                            ? "normal"
+                            : parseFloat(formData.sugarLevel) < 80
+                            ? "low"
+                            : "high"
+                        }`}
+                      >
+                        {validateField("sugarLevel", formData.sugarLevel)
+                          ? "Normal"
+                          : parseFloat(formData.sugarLevel) < 80
+                          ? "Low"
+                          : "High"}
+                      </span>
                     )}
                   </div>
                 </div>

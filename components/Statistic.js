@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 // Add this helper function at the top of your component
-const formatValue = (value, unit = '') => {
-  if (!value || value.toLowerCase() === 'no') {
-    return 'No';
+const formatValue = (value, unit = "") => {
+  if (!value || value.toLowerCase() === "no") {
+    return "No";
   }
   return unit ? `${value} ${unit}` : value;
 };
@@ -174,8 +174,7 @@ const Statistic = () => {
             // Convert to array and sort by date
             return Object.values(dailyGroups)
               .sort((a, b) => a.timestamp - b.timestamp)
-              .map((item) => item.value)
-              .slice(-7); // Get last 7 days of data
+              .map((item) => item.value); // Remove the slice(-7) to keep all data
           };
 
           // Process each metric
@@ -311,7 +310,7 @@ const Statistic = () => {
         if (!user) return;
 
         const uid = user.uid;
-        
+
         // Get current report timestamp
         const healthReportRef = ref(db, `users/${uid}/healthReport`);
         const healthReportSnapshot = await get(healthReportRef);
@@ -321,14 +320,17 @@ const Statistic = () => {
           const currentTimestamp = currentReport.timestamp;
 
           // Check if this report exists in saved reports
-          const savedReportRef = ref(db, `users/${uid}/reports/${currentTimestamp}`);
+          const savedReportRef = ref(
+            db,
+            `users/${uid}/reports/${currentTimestamp}`
+          );
           const savedReportSnapshot = await get(savedReportRef);
 
           setCurrentReportSaved(savedReportSnapshot.exists());
           setShowSaveSuccess(savedReportSnapshot.exists());
         }
       } catch (error) {
-        console.error('Error checking saved report:', error);
+        console.error("Error checking saved report:", error);
       }
     };
 
@@ -370,7 +372,7 @@ const Statistic = () => {
       const healthReportSnapshot = await get(healthReportRef);
 
       if (!healthReportSnapshot.exists()) {
-        toast.error('No report found to save');
+        toast.error("No report found to save");
         return;
       }
 
@@ -380,11 +382,14 @@ const Statistic = () => {
       // Save to /reports/{timestamp}
       await set(ref(db, `users/${uid}/reports/${currentTimestamp}`), {
         report: currentReport.report,
-        timestamp: currentTimestamp
+        timestamp: currentTimestamp,
       });
 
       // Verify save by checking if timestamp exists in /reports
-      const savedReportRef = ref(db, `users/${uid}/reports/${currentTimestamp}`);
+      const savedReportRef = ref(
+        db,
+        `users/${uid}/reports/${currentTimestamp}`
+      );
       const savedReportSnapshot = await get(savedReportRef);
 
       if (savedReportSnapshot.exists()) {
@@ -396,14 +401,13 @@ const Statistic = () => {
             setShowSaveSuccess(true); // Keep showing tick after animation
           }
         }, 2000);
-        toast.success('Report saved successfully!');
+        toast.success("Report saved successfully!");
       } else {
-        toast.error('Failed to verify report save');
+        toast.error("Failed to verify report save");
       }
-
     } catch (error) {
-      console.error('Error saving report:', error);
-      toast.error('Failed to save report');
+      console.error("Error saving report:", error);
+      toast.error("Failed to save report");
     }
   };
 
@@ -419,12 +423,11 @@ const Statistic = () => {
       // Clear previous report and save new one
       await set(ref(db, `users/${uid}/healthReport`), {
         report: reportData,
-        timestamp: timestamp
+        timestamp: timestamp,
       });
-
     } catch (error) {
-      console.error('Error saving health report:', error);
-      toast.error('Failed to save health report');
+      console.error("Error saving health report:", error);
+      toast.error("Failed to save health report");
     }
   };
 
@@ -434,13 +437,13 @@ const Statistic = () => {
     return arr.slice(arr.length - n);
   };
 
-  // Get last 7 entries for each metric
+  // Get entries for each metric
   const getChartData = () => {
     return {
-      bp: getLastNElements(details.bp, 7),
-      hr: getLastNElements(details.hr, 7),
-      sugar: getLastNElements(details.sugar, 7),
-      performance: getLastNElements(details.performance, 7),
+      bp: details.bp,
+      hr: details.hr,
+      sugar: details.sugar,
+      performance: details.performance,
     };
   };
 
@@ -897,7 +900,7 @@ const Statistic = () => {
                 Smoke
               </div>
               <div className="statistic-personalInfo-content">
-                {formatValue(formData.cigarettesPerDay, 'Cigarettes/Day')}
+                {formatValue(formData.cigarettesPerDay, "Cigarettes/Day")}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -906,7 +909,7 @@ const Statistic = () => {
                 Alcohol
               </div>
               <div className="statistic-personalInfo-content">
-                {formatValue(formData.drinksPerWeek, 'Drinks/Week')}
+                {formatValue(formData.drinksPerWeek, "Drinks/Week")}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -915,7 +918,7 @@ const Statistic = () => {
                 Physical Acitivity
               </div>
               <div className="statistic-personalInfo-content">
-                {formatValue(formData.physicalPerWeek, 'Hrs/Week')}
+                {formatValue(formData.physicalPerWeek, "Hrs/Week")}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -1081,7 +1084,9 @@ const Statistic = () => {
             <div className="statistic-report-footer">
               <div className="statistic-report-buttons">
                 <div
-                  className={`statistic-report-button save-btn ${showSaveSuccess ? 'success' : ''}`}
+                  className={`statistic-report-button save-btn ${
+                    showSaveSuccess ? "success" : ""
+                  }`}
                   onClick={() => !currentReportSaved && handleSaveReport()}
                 >
                   {/* Plus SVG (existing) */}
