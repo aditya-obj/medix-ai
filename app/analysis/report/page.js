@@ -490,7 +490,7 @@ const Report = () => {
             onClick={() => router.push("/analysis")}
             className="report-empty-button secondary"
           >
-            Back to Analysis
+            Your Report
           </button>
         </div>
       </div>
@@ -505,12 +505,12 @@ const Report = () => {
       className="report-container default-padding"
     >
       <button onClick={() => router.push("/analysis")} className="back-button">
-        <IoArrowBack /> Back to Analysis
+        <IoArrowBack /> AI Recommendation
       </button>
 
       <div className="report-content-wrapper">
 
-        <div className="report-content">
+        <div className="report-content areport-content">
           {selectedReport ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -528,13 +528,13 @@ const Report = () => {
                 <div className="report-header-buttons">
                   <button 
                     onClick={handleSaveReport} 
-                    className={`save-button ${isSaved ? 'saved' : ''}`}
+                    className={`download-button ${isSaved ? 'saved' : ''}`}
                     disabled={isSaved}
                   >
                     {isSaved ? 'Saved' : 'Save Report'}
                   </button>
                   <button onClick={downloadPDF} className="download-button">
-                    <FaDownload /> Download PDF
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M15 21H9C6.17157 21 4.75736 21 3.87868 20.1213C3 19.2426 3 17.8284 3 15M21 15C21 17.8284 21 19.2426 20.1213 20.1213C19.8215 20.4211 19.4594 20.6186 19 20.7487" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg> Download PDF
                   </button>
                 </div>
               </div>

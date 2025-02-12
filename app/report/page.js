@@ -460,12 +460,6 @@ const Report = () => {
           >
             Get Your Health Report
           </button>
-          <button
-            onClick={() => router.push("/analysis")}
-            className="report-empty-button secondary"
-          >
-            Back to Analysis
-          </button>
         </div>
       </div>
     );
@@ -478,13 +472,16 @@ const Report = () => {
       transition={{ duration: 0.5 }}
       className="report-container default-padding"
     >
-      <button onClick={() => router.push("/analysis")} className="back-button">
-        <IoArrowBack /> Back to Analysis
-      </button>
+      
 
       <div className="report-content-wrapper">
         <div className="report-sidebar">
-          <h2>Your Reports</h2>
+          <h2>
+          <button onClick={() => router.push("/")} className="back-button">
+            <IoArrowBack />
+          </button>
+            Saved Reports
+            </h2>
           <div className="report-list">
             {reports.map((report) => (
               <motion.div
@@ -500,6 +497,7 @@ const Report = () => {
                   <div className="report-item-left">
                     <div className="report-item-date">
                       <FaRegCalendarAlt className="calendar-icon" />
+
                       {formatDate(report.timestamp)}
                     </div>
                     <div className="report-item-status">
@@ -510,8 +508,8 @@ const Report = () => {
                   </div>
                   <div className="report-item-icon">
                     {selectedReport?.timestamp === report.timestamp
-                      ? "📄"
-                      : "📑"}
+                      ? <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M3 15H21M3 19H15M3 7H11M3 11H11M19.4 11H16.6C16.0399 11 15.7599 11 15.546 10.891C15.3578 10.7951 15.2049 10.6422 15.109 10.454C15 10.2401 15 9.96005 15 9.4V6.6C15 6.03995 15 5.75992 15.109 5.54601C15.2049 5.35785 15.3578 5.20487 15.546 5.10899C15.7599 5 16.0399 5 16.6 5H19.4C19.9601 5 20.2401 5 20.454 5.10899C20.6422 5.20487 20.7951 5.35785 20.891 5.54601C21 5.75992 21 6.03995 21 6.6V9.4C21 9.96005 21 10.2401 20.891 10.454C20.7951 10.6422 20.6422 10.7951 20.454 10.891C20.2401 11 19.9601 11 19.4 11Z" stroke="#e5e5e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg>
+                      : <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="style=linear"> <g id="document"> <path id="rec" d="M3 7C3 4.23858 5.23858 2 8 2H16C18.7614 2 21 4.23858 21 7V17C21 19.7614 18.7614 22 16 22H8C5.23858 22 3 19.7614 3 17V7Z" stroke="#9b9b9b" strokeWidth="1.5"></path> <path id="line" d="M8 8.2002H16" stroke="#9b9b9b" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path> <path id="line_2" d="M8 12.2002H16" stroke="#9b9b9b" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path> <path id="line_3" d="M9 16.2002H15" stroke="#9b9b9b" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g> </g></svg>}
                   </div>
                 </div>
               </motion.div>
@@ -535,7 +533,7 @@ const Report = () => {
                   </div>
                 </div>
                 <button onClick={downloadPDF} className="download-button">
-                  <FaDownload /> Download PDF
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M15 21H9C6.17157 21 4.75736 21 3.87868 20.1213C3 19.2426 3 17.8284 3 15M21 15C21 17.8284 21 19.2426 20.1213 20.1213C19.8215 20.4211 19.4594 20.6186 19 20.7487" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> </g></svg> Download PDF
                 </button>
               </div>
               <div className="report-body">
