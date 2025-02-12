@@ -390,7 +390,7 @@ const Statistic = () => {
   return (
     <div className="statistic-container">
       <div className="statistic-title-container">
-        <div className="statistic-title">Your Statistic</div>
+        <div className="statistic-title">Health Analysis</div>
         <div className="statistic-title-content">
           <div
             className={`statistic-bloodPressure ${
