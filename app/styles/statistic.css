@@ -818,3 +818,46 @@
   margin-top: -24px;
   white-space: nowrap;
 }
+
+.statistic-report-button.save-btn {
+  position: relative;
+}
+
+.statistic-report-button.save-btn .success-tick {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.statistic-report-button.save-btn.success .save,
+.statistic-report-button.save-btn.success .active-save {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
+}
+
+.statistic-report-button.save-btn.success .success-tick {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Animation for the transition */
+.statistic-report-button.save-btn .save,
+.statistic-report-button.save-btn .active-save {
+  transition: all 0.3s ease;
+}
+
+.statistic-report-button.save-btn.success {
+  background-color: #f0fdf4; /* Light green background */
+  border: 1px solid #22c55e; /* Green border */
+  cursor: not-allowed; /* Show blocked cursor when saved */
+}
+
+.statistic-report-button.save-btn.success:hover {
+  background-color: #dcfce7; /* Slightly darker green on hover */
+  transform: none; /* Prevent hover animation when saved */
+}

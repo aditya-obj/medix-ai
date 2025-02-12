@@ -77,7 +77,7 @@ const Page = () => {
         <div className="hero-section-content">
           <h1 className='hero-section-title'>Our Healthcare Solutions Meet Every Need</h1>
           <p className='hero-section-description'>Unlock your best self with AI-powered health insights! Get a detailed health report and personalized tips to boost your well-being effortlessly.</p>
-          <Link href="/analysis/report" className='hero-section-button'>Check Now</Link>
+          <Link href="/check" className='hero-section-button'>Check Now</Link>
         </div>
 
         <div className="hero-section-img">

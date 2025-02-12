@@ -81,6 +81,8 @@ const Statistic = () => {
   };
 
   const router = useRouter();
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+  const [currentReportSaved, setCurrentReportSaved] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -294,6 +296,37 @@ const Statistic = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const checkIfReportSaved = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const uid = user.uid;
+        
+        // Get current report timestamp
+        const healthReportRef = ref(db, `users/${uid}/healthReport`);
+        const healthReportSnapshot = await get(healthReportRef);
+
+        if (healthReportSnapshot.exists()) {
+          const currentReport = healthReportSnapshot.val();
+          const currentTimestamp = currentReport.timestamp;
+
+          // Check if this report exists in saved reports
+          const savedReportRef = ref(db, `users/${uid}/reports/${currentTimestamp}`);
+          const savedReportSnapshot = await get(savedReportRef);
+
+          setCurrentReportSaved(savedReportSnapshot.exists());
+          setShowSaveSuccess(savedReportSnapshot.exists());
+        }
+      } catch (error) {
+        console.error('Error checking saved report:', error);
+      }
+    };
+
+    checkIfReportSaved();
+  }, []);
+
   const handleLeftArrowClick = () => {
     if (leftArrowStatus) {
       setLeftArrowStatus(false);
@@ -324,9 +357,7 @@ const Statistic = () => {
       if (!user) return;
 
       const uid = user.uid;
-      const timestamp = Date.now();
 
-      // First, get the current report from /healthReport
       const healthReportRef = ref(db, `users/${uid}/healthReport`);
       const healthReportSnapshot = await get(healthReportRef);
 
@@ -336,14 +367,32 @@ const Statistic = () => {
       }
 
       const currentReport = healthReportSnapshot.val();
+      const currentTimestamp = currentReport.timestamp;
 
-      // Save to /users/{uid}/reports/{timestamp} instead of /reports
-      await set(ref(db, `users/${uid}/reports/${currentReport.timestamp}`), {
+      // Save to /reports/{timestamp}
+      await set(ref(db, `users/${uid}/reports/${currentTimestamp}`), {
         report: currentReport.report,
-        timestamp: currentReport.timestamp
+        timestamp: currentTimestamp
       });
 
-      toast.success('Report saved successfully!');
+      // Verify save by checking if timestamp exists in /reports
+      const savedReportRef = ref(db, `users/${uid}/reports/${currentTimestamp}`);
+      const savedReportSnapshot = await get(savedReportRef);
+
+      if (savedReportSnapshot.exists()) {
+        setShowSaveSuccess(true);
+        setCurrentReportSaved(true);
+        // Only animate the transition
+        setTimeout(() => {
+          if (!currentReportSaved) {
+            setShowSaveSuccess(true); // Keep showing tick after animation
+          }
+        }, 2000);
+        toast.success('Report saved successfully!');
+      } else {
+        toast.error('Failed to verify report save');
+      }
+
     } catch (error) {
       console.error('Error saving report:', error);
       toast.error('Failed to save report');
@@ -1024,9 +1073,10 @@ const Statistic = () => {
             <div className="statistic-report-footer">
               <div className="statistic-report-buttons">
                 <div
-                  className="statistic-report-button save-btn"
-                  onClick={handleSaveReport}
+                  className={`statistic-report-button save-btn ${showSaveSuccess ? 'success' : ''}`}
+                  onClick={() => !currentReportSaved && handleSaveReport()}
                 >
+                  {/* Plus SVG (existing) */}
                   <svg
                     className="save"
                     viewBox="0 0 24 24"
@@ -1050,6 +1100,7 @@ const Statistic = () => {
                       ></path>{" "}
                     </g>
                   </svg>
+                  {/* Active Plus SVG (existing) */}
                   <svg
                     className="active-save"
                     viewBox="0 0 24 24"
@@ -1072,6 +1123,21 @@ const Statistic = () => {
                         strokeLinejoin="round"
                       ></path>{" "}
                     </g>
+                  </svg>
+                  {/* Success Tick SVG (new) */}
+                  <svg
+                    className="success-tick"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 12L10 18L20 6"
+                      stroke="#22c55e"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </div>
                 <div
