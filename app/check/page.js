@@ -997,6 +997,7 @@ const Check = () => {
                       }`}
                       value={formData.sugarLevel}
                       onChange={handleChange}
+                      placeholder="80/120"
                     />
                     {errors.sugarLevel && (
                       <span className="error-message">{errors.sugarLevel}</span>
