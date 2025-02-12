@@ -490,7 +490,7 @@ const Report = () => {
             onClick={() => router.push("/analysis")}
             className="report-empty-button secondary"
           >
-            Back to Analysis
+            Your Report
           </button>
         </div>
       </div>
@@ -505,7 +505,7 @@ const Report = () => {
       className="report-container default-padding"
     >
       <button onClick={() => router.push("/analysis")} className="back-button">
-        <IoArrowBack /> Back to Analysis
+        <IoArrowBack /> AI Recommendation
       </button>
 
       <div className="report-content-wrapper">
@@ -528,7 +528,7 @@ const Report = () => {
                 <div className="report-header-buttons">
                   <button 
                     onClick={handleSaveReport} 
-                    className={`save-button ${isSaved ? 'saved' : ''}`}
+                    className={`download-button ${isSaved ? 'saved' : ''}`}
                     disabled={isSaved}
                   >
                     {isSaved ? 'Saved' : 'Save Report'}
