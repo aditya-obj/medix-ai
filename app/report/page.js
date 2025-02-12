@@ -442,7 +442,7 @@ const Report = () => {
     return (
       <div className="report-loading">
         <div className="report-loading-spinner"></div>
-        <p>Loading your health reports...</p>
+        <p>Medix AI</p>
       </div>
     );
   }

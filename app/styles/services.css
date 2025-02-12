@@ -4,6 +4,7 @@
   margin: 0 auto;
   background-color: var(--white);
   min-height: 100vh;
+  margin-top: 60px;
 }
 
 .services-header {
