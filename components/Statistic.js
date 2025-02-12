@@ -839,7 +839,9 @@ const Statistic = () => {
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
-                <div className="statistic-personalInfo-title-icon"></div>
+                <div className="statistic-personalInfo-title-icon">
+                
+                </div>
                 Allergies
               </div>
               <div className="statistic-personalInfo-content">
@@ -893,7 +895,9 @@ const Statistic = () => {
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
-                <div className="statistic-personalInfo-title-icon"></div>
+                <div className="statistic-personalInfo-title-icon">
+                  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="#6b6b6b" d="M224 32c9.036 24.71 106.984 58.72 156.096 64-37.096 7.89-53.042 10.52-57.545 32-13.076 62.384 191.477 60.478 115.73 152.223 69.11-15.788 57.922-116.197 15.887-129.84-27.237-8.84-63.75-11.67-47.75-38.383C425.962 88.104 503.57 59.74 448 32zM28.096 292v64h87v-64zm105 0v64h274v-64zm292 0v64h16v-64zm34 0v64h17v-64z"></path></g></svg>
+                </div>
                 Smoke
               </div>
               <div className="statistic-personalInfo-content">
@@ -902,7 +906,9 @@ const Statistic = () => {
             </div>
             <div className="statistic-personalInfo-contents">
               <div className="statistic-personalInfo-titles">
-                <div className="statistic-personalInfo-title-icon"></div>
+                <div className="statistic-personalInfo-title-icon">
+                    
+                </div>
                 Alcohol
               </div>
               <div className="statistic-personalInfo-content">

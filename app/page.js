@@ -116,15 +116,7 @@ const Page = () => {
         </div>
 
         <div className="hero-section-img">
-          <div className="hero-section-image">
-            <div className="line-1"></div>
-            <div className="line-2"></div>
-            <div className="line-3">
-              <div className="line-3-1"></div>
-              <div className="line-3-2"></div>
-            </div>
-            <div className="line-1"></div>
-          </div>
+          <Image src="/hero.png" alt="hero-section-img" width={800} height={800} />
         </div>
       </div>
 
