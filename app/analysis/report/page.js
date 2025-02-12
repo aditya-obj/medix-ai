@@ -510,7 +510,7 @@ const Report = () => {
 
       <div className="report-content-wrapper">
 
-        <div className="report-content">
+        <div className="report-content areport-content">
           {selectedReport ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

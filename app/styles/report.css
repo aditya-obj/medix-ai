@@ -151,6 +151,9 @@
   position: sticky;
   top: 55px;
 }
+.areport-content {
+  height: calc(82vh - 7px);
+}
 
 .report-header {
   display: flex;
@@ -370,6 +373,9 @@
   }
   .report-content {
     max-height: calc(100vh - 180px);
+  }
+  .areport-content {
+    max-height: calc(83vh) !important;
   }
   .download-button {
     padding: 12px 17px;

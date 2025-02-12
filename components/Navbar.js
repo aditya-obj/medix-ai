@@ -84,7 +84,7 @@ const Navbar = () => {
           <div className="web-logout" onClick={handleLogout}>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '34px', height: '34px' }}>
               <path d="M15 20H18C19.1046 20 20 19.1046 20 18M15 4H18C19.1046 4 20 4.89543 20 6V14M7 8L3 12L15 12M7 16L6 15" 
-                stroke="#000000" 
+                stroke="#aa2b01" 
                 strokeWidth="1.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
@@ -92,7 +92,20 @@ const Navbar = () => {
             </svg>
           </div>
         ) : (
-          <div className="web-login" onClick={handleLoginClick}>Login</div>
+          <div className="web-logout" onClick={handleLoginClick}>
+            <svg 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg" 
+              style={{ 
+                width: '34px', 
+                height: '34px', 
+                transform: 'rotate(180deg)'
+              }}
+            >
+              <path d="M15 20H18C19.1046 20 20 19.1046 20 18M15 4H18C19.1046 4 20 4.89543 20 6V14M11 16L15 12H3M11 8L12 9" stroke="#0f0f0f" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+          </div>
         )}
       </nav>
 
