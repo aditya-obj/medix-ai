@@ -357,11 +357,19 @@ const Check = () => {
         const prompt = GeminiPrompt(formData);
         const result = await model.generateContent(prompt);
         const report = result.response.text();
+        const timestamp = Date.now();
+
+        // Store the report in /healthReport with timestamp
+        await set(ref(db, `users/${uid}/healthReport`), {
+          timestamp: timestamp,
+          report: report
+        });
+
         const numResult = await model.generateContent(numPrompt(report));
         const [performance, healthPercentile, protien, fat, carbs] = numResult.response.text().split(",");
 
         // Get current timestamp
-        const timestamp = Date.now();
+        const currentTimestamp = Date.now();
 
         // Update timestamps array
         const timestampsRef = ref(db, `users/${uid}/timestamps`);
@@ -371,7 +379,7 @@ const Check = () => {
         if (timestampsSnapshot.exists()) {
           timestamps = timestampsSnapshot.val();
         }
-        timestamps.push(timestamp);
+        timestamps.push(currentTimestamp);
         await set(timestampsRef, timestamps);
 
         // Store personal data
@@ -452,13 +460,8 @@ const Check = () => {
 
         // Store each detail with timestamp
         for (const [key, value] of Object.entries(detailsData)) {
-          await set(ref(db, `users/${uid}/details/${key}/${timestamp}`), value);
+          await set(ref(db, `users/${uid}/details/${key}/${currentTimestamp}`), value);
         }
-
-        // Store only the latest report
-        await set(ref(db, `users/${uid}/healthReport`), {
-          report
-        });
 
         console.log("Data successfully stored in Firebase");
         toast.success(

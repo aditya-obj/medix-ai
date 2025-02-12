@@ -6,8 +6,9 @@ import AnalyticsChart from "./AnalyticsChart";
 import Image from "next/image";
 import { getAuth } from "firebase/auth";
 import { ref, get, set } from "firebase/database";
-import { db } from "@/components/firebase.config";
+import { db, auth } from "@/components/firebase.config";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const Statistic = () => {
   const leftArrow = useRef(undefined);
@@ -319,51 +320,54 @@ const Statistic = () => {
 
   const handleSaveReport = async () => {
     try {
-      const auth = getAuth();
       const user = auth.currentUser;
-
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
+      if (!user) return;
 
       const uid = user.uid;
+      const timestamp = Date.now();
 
-      // Get the latest timestamp
-      const timestampsRef = ref(db, `users/${uid}/timestamps`);
-      const timestampsSnapshot = await get(timestampsRef);
-
-      if (!timestampsSnapshot.exists()) {
-        throw new Error("No timestamps found");
-      }
-
-      const timestamps = timestampsSnapshot.val();
-      const latestTimestamp = timestamps[timestamps.length - 1];
-
-      // Get the current health report
+      // First, get the current report from /healthReport
       const healthReportRef = ref(db, `users/${uid}/healthReport`);
       const healthReportSnapshot = await get(healthReportRef);
 
       if (!healthReportSnapshot.exists()) {
-        throw new Error("No health report found");
+        toast.error('No report found to save');
+        return;
       }
 
-      const healthReport = healthReportSnapshot.val();
+      const currentReport = healthReportSnapshot.val();
 
-      // Save the report to the reports collection with the timestamp
-      await set(ref(db, `users/${uid}/reports/${latestTimestamp}`), {
-        report: healthReport.report,
-        timestamp: latestTimestamp,
+      // Save to /users/{uid}/reports/{timestamp} instead of /reports
+      await set(ref(db, `users/${uid}/reports/${currentReport.timestamp}`), {
+        report: currentReport.report,
+        timestamp: currentReport.timestamp
       });
 
-      // Visual feedback for successful save
-      const saveBtn = document.querySelector(".save-btn");
-      saveBtn.classList.add("active");
-      setTimeout(() => {
-        saveBtn.classList.remove("active");
-      }, 2000);
+      toast.success('Report saved successfully!');
     } catch (error) {
-      console.error("Error saving report:", error);
-      // Add error handling UI feedback here if needed
+      console.error('Error saving report:', error);
+      toast.error('Failed to save report');
+    }
+  };
+
+  // This function would be called when a new report is generated
+  const saveNewHealthReport = async (reportData) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const uid = user.uid;
+      const timestamp = Date.now();
+
+      // Clear previous report and save new one
+      await set(ref(db, `users/${uid}/healthReport`), {
+        report: reportData,
+        timestamp: timestamp
+      });
+
+    } catch (error) {
+      console.error('Error saving health report:', error);
+      toast.error('Failed to save health report');
     }
   };
 
