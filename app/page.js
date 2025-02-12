@@ -9,6 +9,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Login from '@/components/authentication/Login';
 import Services from '@/components/Services';
+import Footer from '@/components/Footer';
+import ModernFAQ from '@/components/ModernFAQ';
+
 const Page = () => {
   const [showSignUpProfile, setShowSignUpProfile] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -94,6 +97,8 @@ const Page = () => {
       </div>
 
       <Services />
+      <ModernFAQ />
+      <Footer />
     </main>
   );
 }
