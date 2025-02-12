@@ -4,14 +4,14 @@ import "@/app/styles/check.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ref, get, set } from 'firebase/database';
-import { db } from '@/components/firebase.config';
-import { getAuth } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { auth } from '@/components/firebase.config';
+import { ref, get, set } from "firebase/database";
+import { db } from "@/components/firebase.config";
+import { getAuth } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { auth } from "@/components/firebase.config";
 
 const GeminiPrompt = (formData) => {
-    return `
+  return `
     As a healthcare expert, please analyze the following patient data and provide a **comprehensive health assessment report** addressed directly to the patient.
     
     **Patient Profile:**
@@ -23,9 +23,19 @@ const GeminiPrompt = (formData) => {
     - Location: ${formData.location}
     
     **Lifestyle Factors:**
-    - Smoking: ${formData.smoking} ${formData.smoking === 'yes' ? `(${formData.cigarettesPerDay} cigarettes/day)` : ''}
-    - Alcohol Consumption: ${formData.alcohol} ${formData.alcohol === 'yes' ? `(${formData.drinksPerWeek} drinks/week)` : ''}
-    - Physical Activity: ${formData.physicalActivity} ${formData.physicalActivity === 'yes' ? `(${formData.hoursPerWeek} hours/week)` : ''}
+    - Smoking: ${formData.smoking} ${
+    formData.smoking === "yes"
+      ? `(${formData.cigarettesPerDay} cigarettes/day)`
+      : ""
+  }
+    - Alcohol Consumption: ${formData.alcohol} ${
+    formData.alcohol === "yes" ? `(${formData.drinksPerWeek} drinks/week)` : ""
+  }
+    - Physical Activity: ${formData.physicalActivity} ${
+    formData.physicalActivity === "yes"
+      ? `(${formData.hoursPerWeek} hours/week)`
+      : ""
+  }
     - Sleep Duration: ${formData.sleepHours} hours/day
     - Diet Type: ${formData.diet}
     - **Water Intake:** ${formData.waterIntake} liters/day
@@ -34,15 +44,15 @@ const GeminiPrompt = (formData) => {
     - Blood Pressure: ${formData.bloodPressure}
     - Heart Rate: ${formData.heartRate} bpm
     - Blood Sugar Level: ${formData.sugarLevel}
-    - Existing Conditions: ${formData.disease || 'None'}
-    - Current Medications: ${formData.medication || 'None'}
-    - Allergies: ${formData.allergies || 'None'}
+    - Existing Conditions: ${formData.disease || "None"}
+    - Current Medications: ${formData.medication || "None"}
+    - Allergies: ${formData.allergies || "None"}
     
     **Family History:**
     - Diabetes: ${formData.familyDiabetes}
     - Hypertension: ${formData.familyHypertension}
     - Cardiovascular Disease: ${formData.familyCardio}
-    - Genetic Conditions: ${formData.geneticCondition || 'None'}
+    - Genetic Conditions: ${formData.geneticCondition || "None"}
     
     **Please generate a patient health report with the following structure:**
     
@@ -78,7 +88,7 @@ const GeminiPrompt = (formData) => {
 };
 
 const numPrompt = (result) => {
-    return `${result}
+  return `${result}
 
     Extract only the Health Score, Health Percentile Ranking, Protien Intake, Fat Intake, Carbs Intake from this report.
     Return the result strictly in this format: score,percentile,protien,fat,carbs (e.g., 444,92,100,100,100).
@@ -101,7 +111,7 @@ const Check = () => {
   const [readOnlyFields, setReadOnlyFields] = useState({
     name: false,
     gender: false,
-    location: false
+    location: false,
   });
 
   const [formData, setFormData] = useState({
@@ -139,7 +149,7 @@ const Check = () => {
       try {
         const user = auth.currentUser;
         if (!user) {
-          router.push('/');
+          router.push("/");
           return;
         }
 
@@ -147,7 +157,7 @@ const Check = () => {
         let hasExistingData = {
           name: false,
           gender: false,
-          location: false
+          location: false,
         };
 
         // Initialize userData object
@@ -164,7 +174,7 @@ const Check = () => {
         // Fetch personal data
         const personalRef = ref(db, `users/${uid}/personal`);
         const personalSnapshot = await get(personalRef);
-        
+
         if (personalSnapshot.exists()) {
           const personalData = personalSnapshot.val();
           if (personalData.gender) {
@@ -175,23 +185,23 @@ const Check = () => {
           }
           userData = {
             ...userData,
-            gender: personalData.gender || '',
-            location: personalData.location || '',
-            weight: personalData.weight || '',
-            height: personalData.height || '',
-            age: personalData.age || '',
-            smoking: personalData.smoking || 'no',
-            waterIntake: personalData.waterIntake || '',
-            cigarettesPerDay: personalData.cigarettesPerDay || '',
-            alcohol: personalData.alcohol || 'no',
-            drinksPerWeek: personalData.drinksPerWeek || '',
-            physicalActivity: personalData.physicalActivity || 'no',
-            hoursPerWeek: personalData.hoursPerWeek || '',
-            sleepHours: personalData.sleepHours || '',
-            diet: personalData.diet || 'veg',
-            disease: personalData.disease || '',
-            medication: personalData.medication || '',
-            allergies: personalData.allergies || '',
+            gender: personalData.gender || "",
+            location: personalData.location || "",
+            weight: personalData.weight || "",
+            height: personalData.height || "",
+            age: personalData.age || "",
+            smoking: personalData.smoking || "no",
+            waterIntake: personalData.waterIntake || "",
+            cigarettesPerDay: personalData.cigarettesPerDay || "",
+            alcohol: personalData.alcohol || "no",
+            drinksPerWeek: personalData.drinksPerWeek || "",
+            physicalActivity: personalData.physicalActivity || "no",
+            hoursPerWeek: personalData.hoursPerWeek || "",
+            sleepHours: personalData.sleepHours || "",
+            diet: personalData.diet || "veg",
+            disease: personalData.disease || "",
+            medication: personalData.medication || "",
+            allergies: personalData.allergies || "",
           };
         }
 
@@ -203,33 +213,32 @@ const Check = () => {
           const familyData = familySnapshot.val();
           userData = {
             ...userData,
-            familyDiabetes: familyData.familyDiabetes || 'no',
-            familyHypertension: familyData.familyHypertension || 'no',
-            familyCardio: familyData.familyCardio || 'no',
-            geneticCondition: familyData.geneticCondition || '',
+            familyDiabetes: familyData.familyDiabetes || "no",
+            familyHypertension: familyData.familyHypertension || "no",
+            familyCardio: familyData.familyCardio || "no",
+            geneticCondition: familyData.geneticCondition || "",
           };
         }
 
         // Update form data with fetched values
-        setFormData(prevData => ({
+        setFormData((prevData) => ({
           ...prevData,
-          ...userData
+          ...userData,
         }));
 
         // Validate pre-filled fields
-        Object.keys(userData).forEach(field => {
+        Object.keys(userData).forEach((field) => {
           const isValid = validateField(field, userData[field]);
-          setValidFields(prev => ({
+          setValidFields((prev) => ({
             ...prev,
-            [field]: isValid
+            [field]: isValid,
           }));
         });
 
         // Set which fields should be read-only
         setReadOnlyFields(hasExistingData);
-
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
 
@@ -240,7 +249,7 @@ const Check = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
         // Redirect to home page if not authenticated
-        router.push('/');
+        router.push("/");
       } else {
         setIsAuthenticated(true);
       }
@@ -259,11 +268,21 @@ const Check = () => {
 
     switch (step) {
       case 1:
-        const step1Fields = ["name", "gender", "location", "waterIntake", "weight", "height", "age"];
+        const step1Fields = [
+          "name",
+          "gender",
+          "location",
+          "waterIntake",
+          "weight",
+          "height",
+          "age",
+        ];
         return step1Fields.every((field) => {
           const isValid = validateField(field, formData[field]);
           if (!isValid) {
-            newErrors[field] = `Please enter a valid ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
+            newErrors[field] = `Please enter a valid ${field
+              .replace(/([A-Z])/g, " $1")
+              .toLowerCase()}`;
           }
           return isValid;
         });
@@ -346,13 +365,13 @@ const Check = () => {
       try {
         const auth = getAuth();
         const user = auth.currentUser;
-        
+
         if (!user) {
-          throw new Error('User not authenticated');
+          throw new Error("User not authenticated");
         }
 
         const uid = user.uid;
-        
+
         // Generate and process Gemini content first
         const prompt = GeminiPrompt(formData);
         const result = await model.generateContent(prompt);
@@ -362,11 +381,12 @@ const Check = () => {
         // Store the report in /healthReport with timestamp
         await set(ref(db, `users/${uid}/healthReport`), {
           timestamp: timestamp,
-          report: report
+          report: report,
         });
 
         const numResult = await model.generateContent(numPrompt(report));
-        const [performance, healthPercentile, protien, fat, carbs] = numResult.response.text().split(",");
+        const [performance, healthPercentile, protien, fat, carbs] =
+          numResult.response.text().split(",");
 
         // Get current timestamp
         const currentTimestamp = Date.now();
@@ -375,7 +395,7 @@ const Check = () => {
         const timestampsRef = ref(db, `users/${uid}/timestamps`);
         const timestampsSnapshot = await get(timestampsRef);
         let timestamps = [];
-        
+
         if (timestampsSnapshot.exists()) {
           timestamps = timestampsSnapshot.val();
         }
@@ -455,12 +475,15 @@ const Check = () => {
           healthPercentile: healthPercentile,
           protien: protien,
           fat: fat,
-          carbs: carbs
+          carbs: carbs,
         };
 
         // Store each detail with timestamp
         for (const [key, value] of Object.entries(detailsData)) {
-          await set(ref(db, `users/${uid}/details/${key}/${currentTimestamp}`), value);
+          await set(
+            ref(db, `users/${uid}/details/${key}/${currentTimestamp}`),
+            value
+          );
         }
 
         console.log("Data successfully stored in Firebase");
@@ -476,8 +499,8 @@ const Check = () => {
             progress: undefined,
             theme: "light",
             onClose: () => {
-              router.push('/analysis');
-            }
+              router.push("/analysis");
+            },
           }
         );
       } catch (error) {
@@ -564,7 +587,9 @@ const Check = () => {
                     <input
                       type="text"
                       name="name"
-                      className={`form-input ${errors.name ? "error" : ""} ${readOnlyFields.name ? "readonly" : ""}`}
+                      className={`form-input ${errors.name ? "error" : ""} ${
+                        readOnlyFields.name ? "readonly" : ""
+                      }`}
                       value={formData.name}
                       onChange={handleChange}
                       readOnly={readOnlyFields.name}
@@ -578,7 +603,9 @@ const Check = () => {
                     <label className="form-label">Gender*</label>
                     <select
                       name="gender"
-                      className={`form-input ${errors.gender ? "error" : ""} ${readOnlyFields.gender ? "readonly" : ""}`}
+                      className={`form-input ${errors.gender ? "error" : ""} ${
+                        readOnlyFields.gender ? "readonly" : ""
+                      }`}
                       value={formData.gender}
                       onChange={handleChange}
                       disabled={readOnlyFields.gender}
@@ -598,7 +625,9 @@ const Check = () => {
                     <input
                       type="text"
                       name="location"
-                      className={`form-input ${errors.location ? "error" : ""} ${readOnlyFields.location ? "readonly" : ""}`}
+                      className={`form-input ${
+                        errors.location ? "error" : ""
+                      } ${readOnlyFields.location ? "readonly" : ""}`}
                       value={formData.location}
                       onChange={handleChange}
                       readOnly={readOnlyFields.location}
@@ -610,11 +639,15 @@ const Check = () => {
 
                   {/* Add Water Intake Input */}
                   <div className="form-group">
-                    <label className="form-label">Water Intake (liters/day)*</label>
+                    <label className="form-label">
+                      Water Intake (liters/day)*
+                    </label>
                     <input
                       type="number"
                       name="waterIntake"
-                      className={`form-input ${errors.waterIntake ? "error" : ""}`}
+                      className={`form-input ${
+                        errors.waterIntake ? "error" : ""
+                      }`}
                       value={formData.waterIntake}
                       onChange={handleChange}
                       min="0"
@@ -622,7 +655,9 @@ const Check = () => {
                       placeholder="Enter daily water intake"
                     />
                     {errors.waterIntake && (
-                      <span className="error-message">{errors.waterIntake}</span>
+                      <span className="error-message">
+                        {errors.waterIntake}
+                      </span>
                     )}
                   </div>
 
@@ -1163,16 +1198,64 @@ const Check = () => {
           </div>
         </div>
 
-        <div className="image-side">
+        <div
+          className={`image-side ${
+            currentStep === 1
+              ? "personal active"
+              : currentStep === 2
+              ? "lifestyle active"
+              : currentStep === 3
+              ? "medical active"
+              : currentStep === 4
+              ? "family active"
+              : ""
+          }`}
+        >
           <div className="image-overlay">
-            <h2>
-              Health <span>Risk</span> Assessment
-            </h2>
-            <p>
-              Take a proactive step towards understanding your health profile.
-              Our comprehensive assessment analyzes your lifestyle and medical
-              history to provide personalized insights for a healthier future.
-            </p>
+            <h2>Health Assessment</h2>
+            {currentStep === 1 && (
+              <>
+                <h3>Personal Information</h3>
+                <p>
+                  Let's start with the basics. Your personal details help us
+                  create a foundation for your health profile, enabling us to
+                  provide tailored recommendations that match your individual
+                  characteristics.
+                </p>
+              </>
+            )}
+            {currentStep === 2 && (
+              <>
+                <h3>Lifestyle Habits</h3>
+                <p>
+                  Your daily habits shape your health. Understanding your
+                  lifestyle choices helps us identify potential risk factors and
+                  opportunities for positive changes that can enhance your
+                  overall well-being.
+                </p>
+              </>
+            )}
+            {currentStep === 3 && (
+              <>
+                <h3>Medical Overview</h3>
+                <p>
+                  Your medical history provides crucial insights into your
+                  health patterns. This information helps us assess current
+                  health status and identify preventive measures for better
+                  health outcomes.
+                </p>
+              </>
+            )}
+            {currentStep === 4 && (
+              <>
+                <h3>Family Background</h3>
+                <p>
+                  Understanding your family health history is key to identifying
+                  potential genetic predispositions. This helps us provide more
+                  accurate risk assessments and preventive recommendations.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

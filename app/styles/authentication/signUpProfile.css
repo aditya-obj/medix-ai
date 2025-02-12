@@ -1,432 +1,440 @@
 .add-wallpaper-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000;
-    padding: 1rem;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  padding: 1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.add-wallpaper-dialog {
+  background: var(--white-foreground);
+  border: 1px solid rgba(0, 0, 0, 0.428);
+  border-radius: 20px;
+  width: min(92%, 550px);
+  max-height: 90vh;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  will-change: transform, height;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 2rem 2rem;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.dialog-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background: var(--white-foreground);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.432);
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@media screen and (max-width: 768px) {
+  .add-wallpaper-overlay {
+    padding: 0;
+    align-items: flex-end;
   }
-  
+
   .add-wallpaper-dialog {
-    background: var(--white-foreground);
-    border: 1px solid rgba(0, 0, 0, 0.428);
-    border-radius: 20px;
-    width: min(92%, 550px);
-    max-height: 90vh;
+    width: 100%;
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    height: 20vh;
+    transform: translateZ(0);
+    will-change: transform, height;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .add-wallpaper-dialog.expanded {
+    height: 360px;
+  }
+
+  .dialog-content {
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: calc(100% - 60px);
+    width: 100%;
+  }
+
+  .add-wallpaper-form {
+    padding: 0 1rem 2rem;
+    margin-bottom: env(safe-area-inset-bottom, 20px);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .add-wallpaper-dialog.expanded {
+    height: 360px !important;
+  }
+
+  .dialog-header {
+    padding: 0.5rem 1rem 0.75rem;
+    border-radius: 20px 20px 0 0;
     position: relative;
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
+    z-index: 10;
+    background: #1a1a1a;
+    transform: translateZ(0);
+    will-change: transform;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 1rem;
+  }
+  .file-name {
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.875rem;
+    max-width: 150px;
+  }
+}
+
+.add-wallpaper-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--black);
+  margin: 0;
+  text-align: left;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.add-wallpaper-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color);
+  opacity: 0.9;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: var(--white);
+  color: var(--color);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: rgba(255, 85, 0, 0.541);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(255, 85, 0, 0.15);
+}
+
+.form-group input::placeholder {
+  color: var(--color);
+  opacity: 0.4;
+  /* font-style: italic; */
+  font-size: 0.9375rem;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.icon-container {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+}
+
+.check-icon {
+  fill: #0ac720;
+  width: 100%;
+  height: 100%;
+}
+
+.cross-icon {
+  fill: #e53e3e;
+  width: 100%;
+  height: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px 35px 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.upload-button {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #ff6600 0%, #c91313 70%, #c91313 100%);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 81, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  /* overflow: hidden; */
+}
+
+.upload-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(255, 81, 0, 0.3);
+  background: linear-gradient(135deg, #ff7315 0%, #cb0000 70%, #cb0000 100%);
+}
+
+.upload-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #666 0%, #444 100%);
+  transform: none;
+}
+
+.success-message {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 200, 83, 0.15);
+  color: #00c853;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(0, 200, 83, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 200, 83, 0.2);
+}
+
+.success-message svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .add-wallpaper-overlay {
+    padding: 0;
+    background: rgba(0, 0, 0, 0.75);
+    align-items: flex-end;
+    transition: opacity 0.3s ease;
+  }
+
+  .add-wallpaper-dialog {
+    background: #1a1a1a;
+    width: 100%;
+    height: 20vh;
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    padding: 1rem;
+    position: relative;
+    will-change: height, transform;
+    overflow-y: auto;
+    transform-origin: bottom;
+    transition: height 0.3s ease, transform 0.3s ease;
+  }
+
+  .add-wallpaper-dialog[style*="height: 0"] {
+    transform: translateY(100%);
+  }
+
+  .add-wallpaper-form {
+    padding: 0 1rem 2rem;
+    margin-bottom: env(safe-area-inset-bottom, 20px);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dialog-content {
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: calc(100% - 60px);
+  }
+
+  .add-wallpaper-dialog {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    will-change: transform, height;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transform: translateY(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
   }
-  
-  .dialog-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 2rem 2rem;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-  
-  .dialog-header {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.25rem 2rem;
-    background: var(--white-foreground);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.432);
-    margin-bottom: 1.5rem;
-    flex-shrink: 0;
-    transform: translateZ(0);
-    will-change: transform;
-  }
-  
-  @media screen and (max-width: 768px) {
-    .add-wallpaper-overlay {
-      padding: 0;
-      align-items: flex-end;
-    }
-  
-    .add-wallpaper-dialog {
-      width: 100%;
-      margin: 0;
-      border-radius: 20px 20px 0 0;
-      height: 20vh;
-      transform: translateZ(0);
-      will-change: transform, height;
-      transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
-    }
-  
-    .add-wallpaper-dialog.expanded {
-      height: 360px;
-    }
-  
-    .dialog-content {
-      padding: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      height: calc(100% - 60px);
-      width: 100%;
-    }
-  
-    .add-wallpaper-form {
-      padding: 0 1rem 2rem;
-      margin-bottom: env(safe-area-inset-bottom, 20px);
-      width: 100%;
-      box-sizing: border-box;
-    }
-  
-  
-    .add-wallpaper-dialog.expanded {
-      height: 360px !important;
-    }
-  
-    .dialog-header {
-      padding: 0.5rem 1rem 0.75rem;
-      border-radius: 20px 20px 0 0;
-      position: relative;
-      z-index: 10;
-      background: #1a1a1a;
-      transform: translateZ(0);
-      will-change: transform;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-      margin-bottom: 1rem;
-    }
-    .file-name {
-      font-size: 0.8125rem;
-      padding: 0.5rem 0.875rem;
-      max-width: 150px;
-    }
-  }
-  
+
   .add-wallpaper-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--black);
-    margin: 0;
-    text-align: left;
-    letter-spacing: -0.3px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-size: 1.125rem;
+    margin-top: 0.25rem;
   }
-  
-  .add-wallpaper-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
+}
+
+@media screen and (max-width: 480px) {
+  .add-wallpaper-dialog {
+    padding: 0.75rem;
   }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .form-group label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color);
-    opacity: 0.9;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    margin-left: 0.25rem;
-  }
-  
-  .form-group input,
-  .form-group select {
-    padding: 1rem 1.25rem;
-    border-radius: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    background: var(--white);
-    color: var(--color);
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  
-  .form-group input:focus,
-  .form-group select:focus {
-    outline: none;
-    border-color: rgba(255, 85, 0, 0.541);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 4px rgba(255, 85, 0, 0.15);
-  }
-  
-  .form-group input::placeholder {
-    color: var(--color);
-    opacity: 0.4;
-    /* font-style: italic; */
-    font-size: 0.9375rem;
-  }
-  
-  .input-container {
-    position: relative;
-    width: 100%;
-  }
-  
-  .icon-container {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-  }
-  
-  .check-icon {
-    fill: #0ac720;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .cross-icon {
-    fill: #e53e3e;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .input-field {
-    width: 100%;
-    padding: 8px 35px 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .input-field:focus {
-    outline: none;
-    border-color: #4a90e2;
-  }
-  
+}
+
+@media screen and (max-width: 768px) {
   .upload-button {
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, #ff6600 0%, #c91313 70%, #c91313 100%);
-    color: var(--white);
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 81, 0, 0.2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    position: relative;
-    /* overflow: hidden; */
-  }
-  
-  .upload-button:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 81, 0, 0.3);
-    background: linear-gradient(135deg, #ff7315 0%, #cb0000 70%, #cb0000 100%);
-  }
-  
-  .upload-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    background: linear-gradient(135deg, #666 0%, #444 100%);
-    transform: none;
-  }
-  
-  .success-message {
-    position: absolute;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 200, 83, 0.15);
-    color: #00c853;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    padding: 0.875rem 1.75rem;
     font-size: 0.9375rem;
-    font-weight: 600;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 2px solid rgba(0, 200, 83, 0.3);
-    box-shadow: 0 8px 24px rgba(0, 200, 83, 0.2);
   }
-  
-  .success-message svg {
-    width: 16px;
-    height: 16px;
-  }
-  
-  /* Responsive Styles */
-  @media screen and (max-width: 768px) {
-    .add-wallpaper-overlay {
-      padding: 0;
-      background: rgba(0, 0, 0, 0.75);
-      align-items: flex-end;
-      transition: opacity 0.3s ease;
-    }
-  
-    .add-wallpaper-dialog {
-      background: #1a1a1a;
-      width: 100%;
-      height: 20vh;
-      margin: 0;
-      border-radius: 20px 20px 0 0;
-      padding: 1rem;
-      position: relative;
-      will-change: height, transform;
-      overflow-y: auto;
-      transform-origin: bottom;
-      transition: height 0.3s ease, transform 0.3s ease;
-    }
-  
-    .add-wallpaper-dialog[style*="height: 0"] {
-      transform: translateY(100%);
-    }
-  
-    .add-wallpaper-form {
-      padding: 0 1rem 2rem;
-      margin-bottom: env(safe-area-inset-bottom, 20px);
-      width: 100%;
-      box-sizing: border-box;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  
-    .dialog-content {
-      padding: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      height: calc(100% - 60px);
-    }
-  
-    .add-wallpaper-dialog {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-  
-    .add-wallpaper-title {
-      font-size: 1.125rem;
-      margin-top: 0.25rem;
-    }
-  
-  }
-  
-  @media screen and (max-width: 480px) {
-    .add-wallpaper-dialog {
-      padding: 0.75rem;
-    }
-  
-  }
-  
-  @media screen and (max-width: 768px) {
-    .upload-button {
-      padding: 0.875rem 1.75rem;
-      font-size: 0.9375rem;
-    }
-  }
-  
-  @media screen and (max-width: 480px) {
-    .upload-button {
-      padding: 0.75rem 1.5rem;
-      font-size: 0.875rem;
-    }
-  } 
-  
-  /* Consolidate scrollbar hiding styles */
-  .add-wallpaper-dialog,
-  .dialog-content,
-  .add-wallpaper-form {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .add-wallpaper-dialog::-webkit-scrollbar,
-  .dialog-content::-webkit-scrollbar,
-  .add-wallpaper-form::-webkit-scrollbar {
-    display: none;
-    width: 0;
-  } 
-  
-  .username-status {
-    margin-left: 8px;
-    display: inline-block;
-    position: relative;
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    transform: translateY(-1px);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  
-  .has-value .username-status {
-    opacity: 1;
-  }
-  
-  .username-status svg {
-    width: 16px;
-    height: 16px;
-    transition: opacity 0.2s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
-  .username-status svg:first-child {
-    opacity: 0;
-  }
-  
-  .username-status svg:last-child {
-    opacity: 0;
-  }
-  
-  /* Show check mark when username is valid */
-  .valid-username .username-status svg:first-child {
-    opacity: 1;
-  }
-  
-  /* Show cross mark when username is invalid */
-  .invalid-username .username-status svg:last-child {
-    opacity: 1;
-  }
+}
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+@media screen and (max-width: 480px) {
+  .upload-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
   }
+}
 
-  .shake {
-    animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
-  }
+/* Consolidate scrollbar hiding styles */
+.add-wallpaper-dialog,
+.dialog-content,
+.add-wallpaper-form {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-  .input-error {
-    border-color: #ff3333 !important;
-    animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
-  }
+.add-wallpaper-dialog::-webkit-scrollbar,
+.dialog-content::-webkit-scrollbar,
+.add-wallpaper-form::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
 
-  /* Reset border on focus for error state */
-  .input-error:focus {
-    border-color: #4a90e2 !important;
+.username-status {
+  margin-left: 8px;
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  transform: translateY(-1px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.has-value .username-status {
+  opacity: 1;
+}
+
+.username-status svg {
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.2s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.username-status svg:first-child {
+  opacity: 0;
+}
+
+.username-status svg:last-child {
+  opacity: 0;
+}
+
+/* Show check mark when username is valid */
+.valid-username .username-status svg:first-child {
+  opacity: 1;
+}
+
+/* Show cross mark when username is invalid */
+.invalid-username .username-status svg:last-child {
+  opacity: 1;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
   }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.shake {
+  animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.input-error {
+  border-color: #ff3333 !important;
+  animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Reset border on focus for error state */
+.input-error:focus {
+  border-color: #4a90e2 !important;
+}
