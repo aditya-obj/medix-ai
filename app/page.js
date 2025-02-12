@@ -8,7 +8,7 @@ import Assessment from '@/components/authentication/Assessment';
 import Link from 'next/link';
 import Image from 'next/image';
 import Login from '@/components/authentication/Login';
-
+import Services from '@/components/Services';
 const Page = () => {
   const [showSignUpProfile, setShowSignUpProfile] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -92,6 +92,8 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      <Services />
     </main>
   );
 }

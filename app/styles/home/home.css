@@ -68,6 +68,7 @@ main {
 }
 .hero-section-content {
     width: 500px;
+    height: fit-content;
 }
 .hero-section-title {
     font-size: 65px;
