@@ -476,7 +476,7 @@ const Report = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="report-container"
+      className="report-container default-padding"
     >
       <button onClick={() => router.push("/analysis")} className="back-button">
         <IoArrowBack /> Back to Analysis

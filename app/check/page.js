@@ -522,7 +522,7 @@ const Check = () => {
   return (
     <>
       <ToastContainer />
-      <div className="page-container">
+      <div className="page-container default-padding">
         <div className="progress-bar">
           <div
             className="progress-bar-fill"

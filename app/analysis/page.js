@@ -32,7 +32,7 @@ const Analysis = () => {
   }
 
   return (
-    <div>
+    <div className='default-padding'>
       <Statistic />
     </div>
   );
