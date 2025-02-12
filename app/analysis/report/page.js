@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { ref, get, set } from "firebase/database";
-import { db } from "@/components/firebase.config";
+import { db, auth } from "@/components/firebase.config";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -375,7 +375,6 @@ const Report = () => {
 
     const fetchReports = async () => {
       try {
-        const auth = getAuth();
         const user = auth.currentUser;
 
         if (!user) {
