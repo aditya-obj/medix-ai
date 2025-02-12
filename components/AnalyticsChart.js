@@ -138,16 +138,14 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
   const getWeekDates = (offset = 0) => {
     const days = [];
     const today = new Date();
-    const currentDay = today.getDay();
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+
+    // Calculate the most recent Monday
     const monday = new Date(today);
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
+    monday.setDate(today.getDate() - daysFromMonday - offset * 7);
 
-    // Adjust to get to Monday of the current week
-    monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
-
-    // Adjust for week offset
-    monday.setDate(monday.getDate() - offset * 7);
-
-    // Get all days from Monday to Sunday for the selected week
+    // Generate dates from Monday to Sunday
     for (let i = 0; i < 7; i++) {
       const date = new Date(monday);
       date.setDate(monday.getDate() + i);
@@ -172,10 +170,17 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
   const getWeekData = (data, offset) => {
     if (!data || data.length === 0) return Array(7).fill(null);
 
-    const startIndex = offset * 7;
-    const weekData = data.slice(startIndex, startIndex + 7).map((value) => {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
+
+    // Calculate indices for the week
+    const endIndex = data.length;
+    const startIndex = Math.max(0, endIndex - (7 + offset * 7));
+
+    // Get the week's data
+    let weekData = data.slice(startIndex, endIndex).map((value) => {
       if (!value) return null;
-      // Handle blood pressure values in "systolic/diastolic" format
       if (
         selectedMetric === "Blood Pressure" &&
         typeof value === "string" &&
@@ -186,9 +191,26 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
       }
       return value;
     });
-    return weekData.length < 7
-      ? [...weekData, ...Array(7 - weekData.length).fill(null)]
-      : weekData;
+
+    // Get the current week's data (last 7 entries)
+    weekData = weekData.slice(-7);
+
+    // If we have less than 7 data points, pad with nulls at the start
+    if (weekData.length < 7) {
+      weekData = [...Array(7 - weekData.length).fill(null), ...weekData];
+    }
+
+    // Align data with Monday-Sunday format
+    const alignedData = Array(7).fill(null);
+    weekData.forEach((value, index) => {
+      if (value !== null) {
+        const dayOfWeek = (currentDay - (weekData.length - 1 - index) + 7) % 7;
+        const alignedIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        alignedData[alignedIndex] = value;
+      }
+    });
+
+    return alignedData;
   };
 
   // Effect to check for older data

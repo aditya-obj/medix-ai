@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { auth } from '@/components/firebase.config';
-import { useRouter } from 'next/navigation';
-import Statistic from '@/components/Statistic';
+import { useEffect, useState } from "react";
+import { auth } from "@/components/firebase.config";
+import { useRouter } from "next/navigation";
+import Statistic from "@/components/Statistic";
 
 const Analysis = () => {
   const router = useRouter();
@@ -13,7 +13,7 @@ const Analysis = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
         // Redirect to home page if not authenticated
-        router.push('/');
+        router.push("/");
       } else {
         setIsAuthenticated(true);
       }
@@ -32,7 +32,7 @@ const Analysis = () => {
   }
 
   return (
-    <div className='default-padding'>
+    <div className="default-padding">
       <Statistic />
     </div>
   );
