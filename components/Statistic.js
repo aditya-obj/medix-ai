@@ -1076,7 +1076,7 @@ const Statistic = () => {
                 </div>
                 <div
                   className="statistic-report-button link-btn"
-                  onClick={() => router.push("/report")}
+                  onClick={() => router.push("/analysis/report")}
                 >
                   <svg
                     className="link"
