@@ -10,6 +10,14 @@ import { db, auth } from "@/components/firebase.config";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
+// Add this helper function at the top of your component
+const formatValue = (value, unit = '') => {
+  if (!value || value.toLowerCase() === 'no') {
+    return 'No';
+  }
+  return unit ? `${value} ${unit}` : value;
+};
+
 const Statistic = () => {
   const leftArrow = useRef(undefined);
   const rightArrow = useRef(undefined);
@@ -835,7 +843,7 @@ const Statistic = () => {
                 Allergies
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.allergies}
+                {formatValue(formData.allergies)}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -844,7 +852,7 @@ const Statistic = () => {
                 Desease
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.disease}
+                {formatValue(formData.disease)}
               </div>
             </div>
           </div>
@@ -880,7 +888,7 @@ const Statistic = () => {
                 Medication
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.medication}
+                {formatValue(formData.medication)}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -889,7 +897,7 @@ const Statistic = () => {
                 Smoke
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.cigarettesPerDay} Cigarettes/Day
+                {formatValue(formData.cigarettesPerDay, 'Cigarettes/Day')}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -898,7 +906,7 @@ const Statistic = () => {
                 Alcohol
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.drinksPerWeek} Drinks/Week
+                {formatValue(formData.drinksPerWeek, 'Drinks/Week')}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -907,7 +915,7 @@ const Statistic = () => {
                 Physical Acitivity
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.physicalPerWeek} Hrs/Week
+                {formatValue(formData.physicalPerWeek, 'Hrs/Week')}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
@@ -937,7 +945,7 @@ const Statistic = () => {
                 Diet
               </div>
               <div className="statistic-personalInfo-content">
-                {formData.diet}
+                {formatValue(formData.diet)}
               </div>
             </div>
             <div className="statistic-personalInfo-contents">
