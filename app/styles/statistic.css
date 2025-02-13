@@ -125,6 +125,8 @@
   width: 30%;
   min-width: 335px;
   height: 600px;
+  position: relative;
+  overflow: hidden;
 }
 .statistic-personalInfo-header-content {
   display: flex;
@@ -176,24 +178,53 @@
   align-items: center;
 }
 .statistic-arrow {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   background-color: var(--white);
-
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+.statistic-arrow:hover {
+  transform: scale(1.1);
+}
+
+.statistic-arrow svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease;
+}
+
 .active-arrow {
   background-color: var(--black);
 }
-.statistic-personalInfo-content-right {
-  display: none;
+.statistic-personalInfo-content-right,
+.statistic-personalInfo-content-left {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(30px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity, visibility;
 }
-.statistic-arrow svg {
-  width: 20px;
-  height: 20px;
+
+.statistic-personalInfo-content-right[style*="display: block"],
+.statistic-personalInfo-content-left[style*="display: block"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.statistic-personalInfo-content-left[style*="display: none"] {
+  transform: translateX(-30px);
+}
+
+.statistic-personalInfo-content-right[style*="display: none"] {
+  transform: translateX(30px);
 }
 
 .statistic-personalInfo-titles {

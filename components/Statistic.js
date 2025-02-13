@@ -338,16 +338,48 @@ const Statistic = () => {
 
   const handleLeftArrowClick = () => {
     if (leftArrowStatus) {
-      setLeftArrowStatus(false);
-      setRightArrowStatus(true);
+      const rightContent = document.querySelector(
+        ".statistic-personalInfo-content-right"
+      );
+      const leftContent = document.querySelector(
+        ".statistic-personalInfo-content-left"
+      );
+
+      rightContent.style.opacity = "0";
+      rightContent.style.transform = "translateX(-20px)";
+
+      setTimeout(() => {
+        setLeftArrowStatus(false);
+        setRightArrowStatus(true);
+
+        rightContent.style.transform = "translateX(20px)";
+        leftContent.style.opacity = "1";
+        leftContent.style.transform = "translateX(0)";
+      }, 300);
     }
   };
 
   // Handle right arrow click
   const handleRightArrowClick = () => {
     if (rightArrowStatus) {
-      setLeftArrowStatus(true);
-      setRightArrowStatus(false);
+      const rightContent = document.querySelector(
+        ".statistic-personalInfo-content-right"
+      );
+      const leftContent = document.querySelector(
+        ".statistic-personalInfo-content-left"
+      );
+
+      leftContent.style.opacity = "0";
+      leftContent.style.transform = "translateX(20px)";
+
+      setTimeout(() => {
+        setLeftArrowStatus(true);
+        setRightArrowStatus(false);
+
+        leftContent.style.transform = "translateX(-20px)";
+        rightContent.style.opacity = "1";
+        rightContent.style.transform = "translateX(0)";
+      }, 300);
     }
   };
 
