@@ -412,6 +412,24 @@ const Check = () => {
         e.preventDefault();
         return;
       }
+
+      // Get min and max values from the input element
+      const min = parseFloat(e.target.min);
+      const max = parseFloat(e.target.max);
+      let newValue = parseFloat(value);
+
+      // Check if value is a valid number
+      if (!isNaN(newValue)) {
+        // Enforce min/max limits
+        if (newValue < min) newValue = min;
+        if (newValue > max) newValue = max;
+
+        setFormData(prev => ({
+          ...prev,
+          [name]: newValue.toString()
+        }));
+        return;
+      }
     }
 
     // For heart rate and sugar level, limit the length
