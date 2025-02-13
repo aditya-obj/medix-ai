@@ -81,11 +81,10 @@ const Statistic = () => {
     },
   });
 
-  // Normal values for each metric
   const normalValues = {
-    bloodPressure: 120, // Normal systolic blood pressure
-    heartRate: 80, // Normal heart rate
-    sugarLevel: 120, // Normal blood sugar level
+    bloodPressure: 120,
+    heartRate: 60,
+    sugarLevel: 120,
   };
 
   const router = useRouter();
