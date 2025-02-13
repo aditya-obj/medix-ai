@@ -101,7 +101,7 @@ const numPrompt = (result) => {
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-const DEBOUNCE_DELAY = 500; // 500ms delay
+const DEBOUNCE_DELAY = 2000; // Changed to 2000ms (2 seconds)
 
 const Check = () => {
   const router = useRouter();
@@ -403,6 +403,12 @@ const Check = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Special handling for blood pressure
+    if (name === "bloodPressure") {
+      handleBloodPressureChange(e);
+      return;
+    }
+
     // Always update the display value immediately
     setFormData(prev => ({
       ...prev,
@@ -426,7 +432,7 @@ const Check = () => {
       return;
     }
 
-    // For number inputs, handle min/max after delay
+    // For number inputs, handle min/max after 2 second delay
     if (e.target.type === 'number') {
       const newTimer = setTimeout(() => {
         const min = parseFloat(e.target.min);
@@ -454,7 +460,7 @@ const Check = () => {
       return;
     }
 
-    // For other inputs, validate after delay
+    // For other inputs, validate after 2 second delay
     const newTimer = setTimeout(() => {
       const isValid = validateField(name, value);
       setValidFields(prev => ({
