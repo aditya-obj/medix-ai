@@ -1188,3 +1188,97 @@ select.form-input.readonly {
     padding: 0.625rem 0.875rem;
   }
 }
+
+/* Range indicator styles */
+.range-indicator {
+  display: block;
+  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+  font-family: "Titillium Web", sans-serif;
+  font-weight: 500;
+}
+
+.range-indicator.normal {
+  color: #28a745;
+}
+
+.range-indicator.high {
+  color: #ff3b3b;
+}
+
+.range-indicator.low {
+  color: #ffc107;
+}
+
+.range-indicator.info {
+  color: #17a2b8;
+}
+
+/* Input validation styles */
+.form-input.normal-range {
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+
+.form-input.out-of-range {
+  border-color: #ff3b3b;
+  background-color: rgba(255, 59, 59, 0.05);
+}
+
+.info-message {
+  display: block;
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+  color: #6c757d;
+  font-family: "Titillium Web", sans-serif;
+}
+
+/* Add shake animation for error state */
+@keyframes shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-4px);
+  }
+  40%,
+  60% {
+    transform: translateX(4px);
+  }
+}
+
+/* Textarea specific styles */
+textarea.form-input {
+  resize: none;
+  overflow: hidden;
+  min-height: 60px;
+  height: auto;
+  transition: height 0.2s ease;
+}
+
+/* Style for textareas when they're readonly */
+textarea.form-input.readonly {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+  border-color: #ddd;
+  resize: none;
+}
+
+/* Add these styles to ensure consistent textarea appearance */
+textarea.form-input:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 64, 0, 0.1);
+  outline: none;
+}
+
+textarea.form-input:hover:not(.readonly) {
+  border-color: var(--orange);
+}

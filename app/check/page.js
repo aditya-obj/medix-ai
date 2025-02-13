@@ -347,6 +347,16 @@ const Check = () => {
     }
   };
 
+  // Add this function to handle textarea auto-resize
+  const handleTextAreaInput = (e) => {
+    const textarea = e.target;
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = "auto";
+    // Set the height to scrollHeight to fit the content
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  // Modify the handleChange function
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -372,7 +382,23 @@ const Check = () => {
       ...prev,
       [name]: isValid,
     }));
+
+    // Auto-resize if it's a textarea
+    if (e.target.tagName.toLowerCase() === "textarea") {
+      handleTextAreaInput(e);
+    }
   };
+
+  // Add useEffect to initialize textarea heights
+  useEffect(() => {
+    // Get all textareas
+    const textareas = document.querySelectorAll("textarea.form-input");
+    textareas.forEach((textarea) => {
+      // Set initial height
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    });
+  }, [formData]); // Re-run when formData changes
 
   // Update the preventMinus function to also prevent 'e'
   const preventMinus = (e) => {
@@ -1185,7 +1211,8 @@ const Check = () => {
                     className={`form-input ${errors.disease ? "error" : ""}`}
                     value={formData.disease}
                     onChange={handleChange}
-                    rows="3"
+                    onInput={handleTextAreaInput}
+                    rows="1"
                   />
                   {errors.disease && (
                     <span className="error-message">{errors.disease}</span>
@@ -1199,7 +1226,8 @@ const Check = () => {
                     className={`form-input ${errors.medication ? "error" : ""}`}
                     value={formData.medication}
                     onChange={handleChange}
-                    rows="3"
+                    onInput={handleTextAreaInput}
+                    rows="1"
                   />
                   {errors.medication && (
                     <span className="error-message">{errors.medication}</span>
@@ -1213,7 +1241,8 @@ const Check = () => {
                     className={`form-input ${errors.allergies ? "error" : ""}`}
                     value={formData.allergies}
                     onChange={handleChange}
-                    rows="3"
+                    onInput={handleTextAreaInput}
+                    rows="1"
                   />
                   {errors.allergies && (
                     <span className="error-message">{errors.allergies}</span>
@@ -1339,7 +1368,8 @@ const Check = () => {
                     }`}
                     value={formData.geneticCondition}
                     onChange={handleChange}
-                    rows="3"
+                    onInput={handleTextAreaInput}
+                    rows="1"
                   />
                   {errors.geneticCondition && (
                     <span className="error-message">
