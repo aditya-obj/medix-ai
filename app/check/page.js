@@ -301,11 +301,18 @@ const Check = () => {
         if (!formData.sleepHours) newErrors.sleepHours = "Sleep hours required";
         break;
       case 3:
-        if (!formData.bloodPressure)
-          newErrors.bloodPressure = "Blood pressure is required";
-        if (!formData.heartRate) newErrors.heartRate = "Heart rate is required";
-        if (!formData.sugarLevel)
-          newErrors.sugarLevel = "Sugar level is required";
+        const isValidBP = validateField(
+          "bloodPressure",
+          formData.bloodPressure
+        );
+        const isValidHR = validateField("heartRate", formData.heartRate);
+        const isValidSugar = validateField("sugarLevel", formData.sugarLevel);
+
+        if (!isValidBP)
+          newErrors.bloodPressure =
+            "Blood pressure is required (format: systolic/diastolic)";
+        if (!isValidHR) newErrors.heartRate = "Heart rate is required";
+        if (!isValidSugar) newErrors.sugarLevel = "Sugar level is required";
         break;
     }
 
@@ -332,9 +339,10 @@ const Check = () => {
       case "sleepHours":
         return value >= 0 && value <= 24;
       case "bloodPressure":
-        if (!value.trim().length) return false;
+        if (!value || !value.trim()) return false;
         if (!value.includes("/")) return false;
         const [systolic, diastolic] = value.split("/").map(Number);
+        if (isNaN(systolic) || isNaN(diastolic)) return false;
         return (
           systolic >= 70 &&
           systolic <= 200 &&
