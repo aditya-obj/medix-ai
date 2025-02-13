@@ -22,6 +22,10 @@
 .statistic-title {
   font-size: 45px;
   padding-left: 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .statistic-title-icon {
@@ -817,11 +821,39 @@
   font-weight: 500;
 }
 
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 7px;
+  gap: 8px;
+  /* background: var(--gray); */
+  border: none;
+  padding: 12px;
+  border-radius: 38px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--black);
+  font-weight: 500;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
+  text-decoration: none;
+  align-self: flex-start;
+  margin-right: 7px;
+}
+
+.back-button:hover {
+  color: var(--white-foreground);
+  background: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
 .statistic-Sugar.show-change::after {
   content: attr(data-change);
   position: absolute;
   top: 35px;
-  right: 5px;
+  right: 45px;
   background-color: var(--orange);
   padding: 2px 6px;
   border-radius: 19px;
@@ -891,4 +923,14 @@
 .statistic-report-button.save-btn.success:hover {
   background-color: #dcfce7; /* Slightly darker green on hover */
   transform: none; /* Prevent hover animation when saved */
+}
+
+@media screen and (max-width: 600px) {
+  .back-button {
+    padding: 6px;
+  }
+  .statistic-title {
+    font-size: 35px;
+    padding-bottom: 20px;
+  }
 }

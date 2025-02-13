@@ -9,6 +9,7 @@ import { ref, get, set } from "firebase/database";
 import { db, auth } from "@/components/firebase.config";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { IoArrowBack } from "react-icons/io5";
 
 // Add this helper function at the top of your component
 const formatValue = (value, unit = "") => {
@@ -431,7 +432,7 @@ const Statistic = () => {
           if (!currentReportSaved) {
             setShowSaveSuccess(true); // Keep showing tick after animation
           }
-        }, 2000);
+        }, 100);
         toast.success("Report saved successfully!");
       } else {
         toast.error("Failed to verify report save");
@@ -481,7 +482,11 @@ const Statistic = () => {
   return (
     <div className="statistic-container">
       <div className="statistic-title-container">
-        <div className="statistic-title">Health Analysis</div>
+        <div className="statistic-title">
+          <button onClick={() => router.push("/")} className="back-button">
+            <IoArrowBack />
+          </button>
+          Health Analysis</div>
         <div className="statistic-title-content">
           <div
             className={`statistic-bloodPressure ${

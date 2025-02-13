@@ -504,7 +504,7 @@ const Report = () => {
       transition={{ duration: 0.5 }}
       className="report-container default-padding"
     >
-      <button onClick={() => router.push("/analysis")} className="back-button">
+      <button onClick={() => router.push("/analysis")} className="back-button rd-back-button">
         <IoArrowBack /> AI Recommendation
       </button>
 
