@@ -362,12 +362,19 @@ body {
   background: rgba(155, 155, 155, 0.08);
   color: var(--black);
   font-family: "Titillium Web", sans-serif;
-  text-indent: 0;
+  text-align: start;
+}
+
+/* Add placeholder styles */
+.form-input::placeholder {
+  color: #9b9b9b;
+  opacity: 0.8;
+  text-align: start;
 }
 
 .form-input[type="number"] {
   padding: 0.875rem 1rem;
-  text-indent: 0;
+  text-align: start;
 }
 
 .form-input[type="number"]::-webkit-inner-spin-button,
@@ -385,6 +392,7 @@ body {
 .form-input.error {
   border-color: #ff3b3b;
   animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  text-align: start;
 }
 
 .form-input.success {
