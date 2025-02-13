@@ -694,7 +694,6 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
       style={{
         height: "100%",
         width: "100%",
-        minHeight: getResponsiveValue(280, 300, 320),
         position: "relative",
         display: "flex",
         flexDirection: "column",
