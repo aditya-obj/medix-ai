@@ -332,16 +332,21 @@ const Check = () => {
       case "sleepHours":
         return value >= 0 && value <= 24;
       case "bloodPressure":
+        if (!value.trim().length) return false;
+        if (!value.includes("/")) return false;
+        const [systolic, diastolic] = value.split("/").map(Number);
         return (
-          value.trim().length > 0 &&
-          value.includes("/") &&
-          value.split("/").length === 2
+          systolic >= 70 &&
+          systolic <= 200 &&
+          diastolic >= 40 &&
+          diastolic <= 130
         );
       case "heartRate":
-        return value > 0;
+        const hr = Number(value);
+        return hr >= 40 && hr <= 200;
       case "sugarLevel":
-        const sugarValue = parseFloat(value);
-        return sugarValue >= 80 && sugarValue <= 120;
+        const sugar = parseFloat(value);
+        return sugar >= 50 && sugar <= 400;
       default:
         return true;
     }
@@ -356,9 +361,42 @@ const Check = () => {
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
+  // Add this function to handle blood pressure input formatting
+  const handleBloodPressureChange = (e) => {
+    let value = e.target.value;
+    // Only allow numbers and forward slash
+    value = value.replace(/[^\d/]/g, "");
+
+    // Prevent multiple slashes
+    if ((value.match(/\//g) || []).length > 1) {
+      return;
+    }
+
+    // Limit the length of numbers before and after slash
+    const parts = value.split("/");
+    if (parts[0] && parts[0].length > 3) {
+      parts[0] = parts[0].slice(0, 3);
+    }
+    if (parts[1] && parts[1].length > 3) {
+      parts[1] = parts[1].slice(0, 3);
+    }
+    value = parts.join("/");
+
+    setFormData((prev) => ({
+      ...prev,
+      bloodPressure: value,
+    }));
+  };
+
   // Modify the handleChange function
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Special handling for blood pressure
+    if (name === "bloodPressure") {
+      handleBloodPressureChange(e);
+      return;
+    }
 
     // Prevent minus sign for number inputs
     if (e.target.type === "number") {
@@ -366,6 +404,14 @@ const Check = () => {
         e.preventDefault();
         return;
       }
+    }
+
+    // For heart rate and sugar level, limit the length
+    if (name === "heartRate" && value.length > 3) {
+      return;
+    }
+    if (name === "sugarLevel" && value.length > 3) {
+      return;
     }
 
     setFormData((prev) => ({
@@ -1078,6 +1124,7 @@ const Check = () => {
                       placeholder="120/80 (Normal Range)"
                       value={formData.bloodPressure}
                       onChange={handleChange}
+                      maxLength={7}
                     />
                     {errors.bloodPressure && (
                       <span className="error-message">
@@ -1108,8 +1155,8 @@ const Check = () => {
                       name="heartRate"
                       onKeyDown={preventMinus}
                       onKeyPress={preventE}
-                      min="10"
-                      max="600"
+                      min="40"
+                      max="200"
                       className={`form-input ${
                         errors.heartRate ? "error" : ""
                       } ${
@@ -1161,7 +1208,8 @@ const Check = () => {
                       name="sugarLevel"
                       onKeyDown={preventMinus}
                       onKeyPress={preventE}
-                      min="10"
+                      min="50"
+                      max="400"
                       className={`form-input ${
                         errors.sugarLevel ? "error" : ""
                       } ${
