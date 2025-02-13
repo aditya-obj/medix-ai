@@ -347,8 +347,8 @@ const Check = () => {
     const { name, value } = e.target;
 
     // Prevent minus sign for number inputs
-    if (e.target.type === 'number') {
-      if (e.nativeEvent.data === '-') {
+    if (e.target.type === "number") {
+      if (e.nativeEvent.data === "-") {
         e.preventDefault();
         return;
       }
@@ -372,14 +372,14 @@ const Check = () => {
 
   // Update the preventMinus function to also prevent 'e'
   const preventMinus = (e) => {
-    if (e.code === 'Minus' || e.code === 'KeyE') {
+    if (e.code === "Minus" || e.code === "KeyE") {
       e.preventDefault();
     }
   };
 
   // Add onKeyPress handler to prevent 'e' more reliably
   const preventE = (e) => {
-    if (e.key === 'e' || e.key === 'E') {
+    if (e.key === "e" || e.key === "E") {
       e.preventDefault();
     }
   };
@@ -388,7 +388,7 @@ const Check = () => {
     e.preventDefault();
     if (validateStep(currentStep)) {
       setIsSubmitting(true);
-      setLoadingProgress(0);  // Initial loading state
+      setLoadingProgress(0); // Initial loading state
       try {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -404,34 +404,34 @@ const Check = () => {
         const result = await model.generateContent(prompt);
         const report = result.response.text();
         const timestamp = Date.now();
-        
-        setLoadingProgress(33);  // Starting AI analysis
+
+        setLoadingProgress(33); // Starting AI analysis
         // Store the report in /healthReport with timestamp
         await set(ref(db, `users/${uid}/healthReport`), {
           timestamp: timestamp,
           report: report,
         });
-        
+
         const numResult = await model.generateContent(numPrompt(report));
         const [performance, healthPercentile, protien, fat, carbs] =
-        numResult.response.text().split(",");
-        
-        setLoadingProgress(66);  // Processing report
-          
-          // Get current timestamp
-          const currentTimestamp = Date.now();
-          
-          // Update timestamps array
-          const timestampsRef = ref(db, `users/${uid}/timestamps`);
-          const timestampsSnapshot = await get(timestampsRef);
-          let timestamps = [];
-          
-          if (timestampsSnapshot.exists()) {
-            timestamps = timestampsSnapshot.val();
+          numResult.response.text().split(",");
+
+        setLoadingProgress(66); // Processing report
+
+        // Get current timestamp
+        const currentTimestamp = Date.now();
+
+        // Update timestamps array
+        const timestampsRef = ref(db, `users/${uid}/timestamps`);
+        const timestampsSnapshot = await get(timestampsRef);
+        let timestamps = [];
+
+        if (timestampsSnapshot.exists()) {
+          timestamps = timestampsSnapshot.val();
         }
         timestamps.push(currentTimestamp);
         await set(timestampsRef, timestamps);
-        
+
         // Store personal data
         const personalRef = ref(db, `users/${uid}/personal`);
         const personalSnapshot = await get(personalRef);
@@ -453,7 +453,7 @@ const Check = () => {
           medication: formData.medication,
           allergies: formData.allergies,
         };
-        
+
         // Only update changed fields for personal data
         if (personalSnapshot.exists()) {
           const currentData = personalSnapshot.val();
@@ -469,7 +469,7 @@ const Check = () => {
         } else {
           await set(personalRef, personalData);
         }
-        
+
         // Store family data
         const familyRef = ref(db, `users/${uid}/family`);
         const familySnapshot = await get(familyRef);
@@ -479,7 +479,7 @@ const Check = () => {
           familyCardio: formData.familyCardio,
           geneticCondition: formData.geneticCondition,
         };
-        
+
         // Only update changed fields for family data
         if (familySnapshot.exists()) {
           const currentData = familySnapshot.val();
@@ -495,7 +495,7 @@ const Check = () => {
         } else {
           await set(familyRef, familyData);
         }
-        
+
         // Store details with timestamp
         const detailsData = {
           bloodPressure: formData.bloodPressure,
@@ -507,7 +507,7 @@ const Check = () => {
           fat: fat,
           carbs: carbs,
         };
-        
+
         // Store each detail with timestamp
         for (const [key, value] of Object.entries(detailsData)) {
           await set(
@@ -515,7 +515,7 @@ const Check = () => {
             value
           );
         }
-        setLoadingProgress(100);  // Finishing up
+        setLoadingProgress(100); // Finishing up
 
         console.log("Data successfully stored in Firebase");
         toast.success(
@@ -576,13 +576,16 @@ const Check = () => {
   return (
     <>
       {isSubmitting && (
-        <LoadingProgress 
+        <LoadingProgress
           progress={loadingProgress}
           stage={
-            loadingProgress === 0 ? "Saving data..." :
-            loadingProgress === 33 ? "Analyzing report..." :
-            loadingProgress === 66 ? "Structuring data..." :
-            "Finishing up..."
+            loadingProgress === 0
+              ? "Saving data..."
+              : loadingProgress === 33
+              ? "Analyzing report..."
+              : loadingProgress === 66
+              ? "Structuring data..."
+              : "Finishing up..."
           }
         />
       )}
@@ -1033,7 +1036,7 @@ const Check = () => {
                       className={`form-input ${
                         errors.bloodPressure ? "error" : ""
                       }`}
-                      placeholder="120/80"
+                      placeholder="120/80 (Normal Range)"
                       value={formData.bloodPressure}
                       onChange={handleChange}
                     />
@@ -1058,6 +1061,7 @@ const Check = () => {
                       }`}
                       value={formData.heartRate}
                       onChange={handleChange}
+                      placeholder="60-100 (Normal Range)"
                     />
                     {errors.heartRate && (
                       <span className="error-message">{errors.heartRate}</span>
@@ -1065,9 +1069,7 @@ const Check = () => {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">
-                      Sugar Level
-                    </label>
+                    <label className="form-label">Sugar Level</label>
                     <input
                       type="number"
                       name="sugarLevel"
@@ -1086,7 +1088,7 @@ const Check = () => {
                       }`}
                       value={formData.sugarLevel}
                       onChange={handleChange}
-                      placeholder="80/120 (normal range)"
+                      placeholder="120 (Normal Range)"
                     />
                     {errors.sugarLevel && (
                       <span className="error-message">{errors.sugarLevel}</span>
