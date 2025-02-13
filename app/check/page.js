@@ -131,7 +131,7 @@ const Check = () => {
     physicalActivity: "no",
     hoursPerWeek: "",
     sleepHours: "",
-    diet: "veg",
+    diet: "vegetarian",
     bloodPressure: "",
     heartRate: "",
     sugarLevel: "",
@@ -200,7 +200,7 @@ const Check = () => {
             physicalActivity: personalData.physicalActivity || "no",
             hoursPerWeek: personalData.hoursPerWeek || "",
             sleepHours: personalData.sleepHours || "",
-            diet: personalData.diet || "veg",
+            diet: personalData.diet || "vegetarian",
             disease: personalData.disease || "",
             medication: personalData.medication || "",
             allergies: personalData.allergies || "",
@@ -935,8 +935,8 @@ const Check = () => {
                     value={formData.diet}
                     onChange={handleChange}
                   >
-                    <option value="veg">Vegetarian</option>
-                    <option value="non-veg">Non-Vegetarian</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="non-vegetarian">Non-Vegetarian</option>
                     <option value="mixed">Mixed</option>
                   </select>
                   {errors.diet && (
