@@ -11,6 +11,7 @@ import Login from '@/components/authentication/Login';
 import Services from '@/components/Services';
 import Footer from '@/components/Footer';
 import ModernFAQ from '@/components/ModernFAQ';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [showSignUpProfile, setShowSignUpProfile] = useState(false);
@@ -19,6 +20,7 @@ const Page = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hasSavedReports, setHasSavedReports] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const checkUsername = async () => {
@@ -90,6 +92,15 @@ const Page = () => {
     };
   }, []);
 
+  const handleCheckNowClick = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      setShowLogin(true);
+    } else {
+      router.push('/check');
+    }
+  };
+
   if (loading) {
     return (
       <div className="report-loading">
@@ -101,17 +112,17 @@ const Page = () => {
 
   return (
     <main>
-      
+      {showLogin && <Login onClose={() => setShowLogin(false)} />}
 
       <div className="hero-section">
         <div className="hero-section-content">
           <h1 className='hero-section-title'>Our Healthcare Solutions Meet Every Need</h1>
           <p className='hero-section-description'>Unlock your best self with AI-powered health insights! Get a detailed health report and personalized tips to boost your well-being effortlessly.</p>
           <div className="link-btns flex gap-4">
-          <Link href="/check" className='hero-section-button'>Check Now</Link>
-          {hasSavedReports && (
-            <Link href="/report" className='hero-section-button sr-btn'>Saved Reports</Link>
-          )}
+            <button onClick={handleCheckNowClick} className='hero-section-button'>Check Now</button>
+            {hasSavedReports && (
+              <Link href="/report" className='hero-section-button sr-btn'>Saved Reports</Link>
+            )}
           </div>
         </div>
 
