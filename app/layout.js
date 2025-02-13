@@ -1,8 +1,11 @@
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
 export const metadata = {
-  title: "Desease Risk Prediction",
+  title: "Medix AI - Disease Risk Prediction",
   description: "Created by Philiswa Nakambule",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
