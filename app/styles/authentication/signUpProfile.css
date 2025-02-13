@@ -101,10 +101,10 @@
     border-radius: 20px 20px 0 0;
     position: relative;
     z-index: 10;
-    background: #1a1a1a;
+    background: var(--white-foreground);
     transform: translateZ(0);
     will-change: transform;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.432);
     margin-bottom: 1rem;
   }
   .file-name {
@@ -282,7 +282,7 @@
   }
 
   .add-wallpaper-dialog {
-    background: #1a1a1a;
+    background: var(--white-foreground);
     width: 100%;
     height: 20vh;
     margin: 0;

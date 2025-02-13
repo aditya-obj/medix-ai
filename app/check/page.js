@@ -669,7 +669,8 @@ const Check = () => {
                       }`}
                       value={formData.waterIntake}
                       onChange={handleChange}
-                      min="0"
+                      min="1"
+                      max="14"
                       step="0.1"
                       placeholder="Enter daily water intake"
                     />
@@ -685,6 +686,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="weight"
+                      min="2"
+                      max="2000"
                       className={`form-input ${errors.weight ? "error" : ""} ${
                         validFields.weight ? "success" : ""
                       }`}
@@ -702,6 +705,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="height"
+                      min="30"
+                      max="300"
                       className={`form-input ${errors.height ? "error" : ""} ${
                         validFields.height ? "success" : ""
                       }`}
@@ -719,6 +724,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="age"
+                      min="5"
+                      max="120"
                       className={`form-input ${errors.age ? "error" : ""} ${
                         validFields.age ? "success" : ""
                       }`}
@@ -802,6 +809,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="cigarettesPerDay"
+                        min="0"
+                        max="50"
                         className={`form-input ${
                           errors.cigarettesPerDay ? "error" : ""
                         }`}
@@ -847,6 +856,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="drinksPerWeek"
+                        min="0"
+                        max="200"
                         className={`form-input ${
                           errors.drinksPerWeek ? "error" : ""
                         }`}
@@ -892,6 +903,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="hoursPerWeek"
+                        min="0"
+                        max="200"
                         className={`form-input ${
                           errors.hoursPerWeek ? "error" : ""
                         }`}
@@ -913,6 +926,8 @@ const Check = () => {
                   <input
                     type="number"
                     name="sleepHours"
+                    min="1"
+                    max="24"
                     className={`form-input ${
                       errors.sleepHours ? "error" : ""
                     } ${validFields.sleepHours ? "success" : ""}`}
@@ -995,6 +1010,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="heartRate"
+                      min="10"
+                      max="600"
                       className={`form-input ${
                         errors.heartRate ? "error" : ""
                       }`}
@@ -1013,6 +1030,7 @@ const Check = () => {
                     <input
                       type="number"
                       name="sugarLevel"
+                      min="10"
                       className={`form-input ${
                         errors.sugarLevel ? "error" : ""
                       } ${
