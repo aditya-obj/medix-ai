@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "@/app/styles/check.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -101,6 +101,8 @@ const numPrompt = (result) => {
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
+const DEBOUNCE_DELAY = 500; // 500ms delay
+
 const Check = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +147,7 @@ const Check = () => {
   });
 
   const [validFields, setValidFields] = useState({});
+  const [debouncedTimer, setDebouncedTimer] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -396,67 +399,74 @@ const Check = () => {
     }));
   };
 
-  // Modify the handleChange function
+  // Update the handleChange function
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Special handling for blood pressure
-    if (name === "bloodPressure") {
-      handleBloodPressureChange(e);
-      return;
-    }
-
-    // Prevent minus sign for number inputs
-    if (e.target.type === "number") {
-      if (e.nativeEvent.data === "-") {
-        e.preventDefault();
-        return;
-      }
-
-      // Get min and max values from the input element
-      const min = parseFloat(e.target.min);
-      const max = parseFloat(e.target.max);
-      let newValue = parseFloat(value);
-
-      // Check if value is a valid number
-      if (!isNaN(newValue)) {
-        // Enforce min/max limits
-        if (newValue < min) newValue = min;
-        if (newValue > max) newValue = max;
-
-        setFormData(prev => ({
-          ...prev,
-          [name]: newValue.toString()
-        }));
-        return;
-      }
-    }
-
-    // For heart rate and sugar level, limit the length
-    if (name === "heartRate" && value.length > 3) {
-      return;
-    }
-    if (name === "sugarLevel" && value.length > 3) {
-      return;
-    }
-
-    setFormData((prev) => ({
+    // Always update the display value immediately
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
 
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+    // Clear previous timer
+    if (debouncedTimer) {
+      clearTimeout(debouncedTimer);
     }
 
-    const isValid = validateField(name, value);
-    setValidFields((prev) => ({
-      ...prev,
-      [name]: isValid,
-    }));
+    // For empty values, just clear and validate
+    if (!value || value === '') {
+      setValidFields(prev => ({
+        ...prev,
+        [name]: false
+      }));
+      if (errors[name]) {
+        setErrors(prev => ({ ...prev, [name]: '' }));
+      }
+      return;
+    }
+
+    // For number inputs, handle min/max after delay
+    if (e.target.type === 'number') {
+      const newTimer = setTimeout(() => {
+        const min = parseFloat(e.target.min);
+        const max = parseFloat(e.target.max);
+        let newValue = parseFloat(value);
+
+        if (!isNaN(newValue)) {
+          if (newValue < min) newValue = min;
+          if (newValue > max) newValue = max;
+
+          setFormData(prev => ({
+            ...prev,
+            [name]: newValue.toString()
+          }));
+
+          const isValid = validateField(name, newValue);
+          setValidFields(prev => ({
+            ...prev,
+            [name]: isValid
+          }));
+        }
+      }, DEBOUNCE_DELAY);
+
+      setDebouncedTimer(newTimer);
+      return;
+    }
+
+    // For other inputs, validate after delay
+    const newTimer = setTimeout(() => {
+      const isValid = validateField(name, value);
+      setValidFields(prev => ({
+        ...prev,
+        [name]: isValid
+      }));
+    }, DEBOUNCE_DELAY);
+
+    setDebouncedTimer(newTimer);
 
     // Auto-resize if it's a textarea
-    if (e.target.tagName.toLowerCase() === "textarea") {
+    if (e.target.tagName.toLowerCase() === 'textarea') {
       handleTextAreaInput(e);
     }
   };
@@ -666,6 +676,15 @@ const Check = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  // Add cleanup in useEffect
+  useEffect(() => {
+    return () => {
+      if (debouncedTimer) {
+        clearTimeout(debouncedTimer);
+      }
+    };
+  }, [debouncedTimer]);
 
   if (isLoading) {
     return <div>Loading...</div>;
