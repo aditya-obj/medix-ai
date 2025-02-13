@@ -9,6 +9,7 @@ import { db } from "@/components/firebase.config";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/components/firebase.config";
+import LoadingProgress from "@/components/LoadingProgress";
 
 const GeminiPrompt = (formData) => {
   return `
@@ -107,6 +108,7 @@ const Check = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [errors, setErrors] = useState({});
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readOnlyFields, setReadOnlyFields] = useState({
     name: false,
@@ -363,6 +365,7 @@ const Check = () => {
     e.preventDefault();
     if (validateStep(currentStep)) {
       setIsSubmitting(true);
+      setLoadingProgress(0);  // Initial loading state
       try {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -378,31 +381,34 @@ const Check = () => {
         const result = await model.generateContent(prompt);
         const report = result.response.text();
         const timestamp = Date.now();
-
+        
+        setLoadingProgress(33);  // Starting AI analysis
         // Store the report in /healthReport with timestamp
         await set(ref(db, `users/${uid}/healthReport`), {
           timestamp: timestamp,
           report: report,
         });
-
+        
         const numResult = await model.generateContent(numPrompt(report));
         const [performance, healthPercentile, protien, fat, carbs] =
-          numResult.response.text().split(",");
-
-        // Get current timestamp
-        const currentTimestamp = Date.now();
-
-        // Update timestamps array
-        const timestampsRef = ref(db, `users/${uid}/timestamps`);
-        const timestampsSnapshot = await get(timestampsRef);
-        let timestamps = [];
-
-        if (timestampsSnapshot.exists()) {
-          timestamps = timestampsSnapshot.val();
+        numResult.response.text().split(",");
+        
+        setLoadingProgress(66);  // Processing report
+          
+          // Get current timestamp
+          const currentTimestamp = Date.now();
+          
+          // Update timestamps array
+          const timestampsRef = ref(db, `users/${uid}/timestamps`);
+          const timestampsSnapshot = await get(timestampsRef);
+          let timestamps = [];
+          
+          if (timestampsSnapshot.exists()) {
+            timestamps = timestampsSnapshot.val();
         }
         timestamps.push(currentTimestamp);
         await set(timestampsRef, timestamps);
-
+        
         // Store personal data
         const personalRef = ref(db, `users/${uid}/personal`);
         const personalSnapshot = await get(personalRef);
@@ -424,7 +430,7 @@ const Check = () => {
           medication: formData.medication,
           allergies: formData.allergies,
         };
-
+        
         // Only update changed fields for personal data
         if (personalSnapshot.exists()) {
           const currentData = personalSnapshot.val();
@@ -440,7 +446,7 @@ const Check = () => {
         } else {
           await set(personalRef, personalData);
         }
-
+        
         // Store family data
         const familyRef = ref(db, `users/${uid}/family`);
         const familySnapshot = await get(familyRef);
@@ -450,7 +456,7 @@ const Check = () => {
           familyCardio: formData.familyCardio,
           geneticCondition: formData.geneticCondition,
         };
-
+        
         // Only update changed fields for family data
         if (familySnapshot.exists()) {
           const currentData = familySnapshot.val();
@@ -466,7 +472,7 @@ const Check = () => {
         } else {
           await set(familyRef, familyData);
         }
-
+        
         // Store details with timestamp
         const detailsData = {
           bloodPressure: formData.bloodPressure,
@@ -478,7 +484,7 @@ const Check = () => {
           fat: fat,
           carbs: carbs,
         };
-
+        
         // Store each detail with timestamp
         for (const [key, value] of Object.entries(detailsData)) {
           await set(
@@ -486,6 +492,7 @@ const Check = () => {
             value
           );
         }
+        setLoadingProgress(100);  // Finishing up
 
         console.log("Data successfully stored in Firebase");
         toast.success(
@@ -545,6 +552,17 @@ const Check = () => {
 
   return (
     <>
+      {isSubmitting && (
+        <LoadingProgress 
+          progress={loadingProgress}
+          stage={
+            loadingProgress === 0 ? "Saving data..." :
+            loadingProgress === 33 ? "Analyzing report..." :
+            loadingProgress === 66 ? "Structuring data..." :
+            "Finishing up..."
+          }
+        />
+      )}
       <ToastContainer />
       <div className="page-container default-padding">
         <div className="progress-bar">
@@ -989,7 +1007,9 @@ const Check = () => {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Sugar Level</label>
+                    <label className="form-label">
+                      Sugar Level
+                    </label>
                     <input
                       type="number"
                       name="sugarLevel"
