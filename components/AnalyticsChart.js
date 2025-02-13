@@ -163,7 +163,9 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
   const checkWeekHasData = (weekData) => {
     return (
       weekData &&
-      weekData.some((value) => value !== null && value !== undefined)
+      weekData.some(
+        (value) => value !== null && value !== undefined && value !== ""
+      )
     );
   };
 
@@ -176,8 +178,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
     const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
 
     // Calculate indices for the week
-    const endIndex = data.length;
-    const startIndex = Math.max(0, endIndex - (7 + offset * 7));
+    const endIndex = data.length - offset * 7;
+    const startIndex = Math.max(0, endIndex - 7);
+
+    // Check if we have valid indices and enough data
+    if (startIndex >= data.length || endIndex <= 0 || startIndex >= endIndex) {
+      return Array(7).fill(null);
+    }
 
     // Get the week's data
     let weekData = data.slice(startIndex, endIndex).map((value) => {
@@ -193,8 +200,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
       return value;
     });
 
-    // Get the current week's data (last 7 entries)
-    weekData = weekData.slice(-7);
+    // Check if we actually have any valid data in this week
+    const hasValidData = weekData.some(
+      (value) => value !== null && value !== undefined && value !== ""
+    );
+    if (!hasValidData) {
+      return Array(7).fill(null);
+    }
 
     // If we have less than 7 data points, pad with nulls at the start
     if (weekData.length < 7) {
@@ -217,10 +229,12 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
   // Effect to check for older data
   useEffect(() => {
     const metricDataArray = metricData[selectedMetric].activeData;
-    const hasOlder = checkWeekHasData(
-      getWeekData(metricDataArray, weekOffset + 1)
+    // Check if there's valid data in the next week
+    const nextWeekData = getWeekData(metricDataArray, weekOffset + 1);
+    const hasValidNextWeekData = nextWeekData.some(
+      (value) => value !== null && value !== undefined && value !== ""
     );
-    setHasOlderData(hasOlder);
+    setHasOlderData(hasValidNextWeekData);
   }, [weekOffset, selectedMetric, metricData]);
 
   const handlePreviousWeek = () => {
@@ -714,7 +728,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
           style={{
             background: hasOlderData
               ? metricData[selectedMetric].borderColor
-              : "#ccc",
+              : "rgba(0, 0, 0, 0.1)",
             border: "none",
             borderRadius: "50%",
             width: getResponsiveValue(28, 30, 32),
@@ -724,7 +738,8 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
             justifyContent: "center",
             cursor: hasOlderData ? "pointer" : "not-allowed",
             opacity: hasOlderData ? 1 : 0.5,
-            transition: "opacity 0.2s",
+            transition: "all 0.2s ease",
+            pointerEvents: hasOlderData ? "auto" : "none",
           }}
         >
           <IoChevronBack color="white" size={getResponsiveValue(16, 18, 20)} />
@@ -746,7 +761,9 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
           disabled={weekOffset === 0}
           style={{
             background:
-              weekOffset > 0 ? metricData[selectedMetric].borderColor : "#ccc",
+              weekOffset > 0
+                ? metricData[selectedMetric].borderColor
+                : "rgba(0, 0, 0, 0.1)",
             border: "none",
             borderRadius: "50%",
             width: getResponsiveValue(28, 30, 32),
@@ -756,7 +773,8 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
             justifyContent: "center",
             cursor: weekOffset > 0 ? "pointer" : "not-allowed",
             opacity: weekOffset > 0 ? 1 : 0.5,
-            transition: "opacity 0.2s",
+            transition: "all 0.2s ease",
+            pointerEvents: weekOffset > 0 ? "auto" : "none",
           }}
         >
           <IoChevronForward
