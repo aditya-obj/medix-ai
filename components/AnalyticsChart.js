@@ -34,10 +34,11 @@ function getBPStatus(systolic) {
 }
 
 function getSugarStatus(value) {
-  if (value < 70) return "Low"; // Blue for < 70
-  if (value <= 100) return "Normal"; // Green for 70-100
-  if (value <= 125) return "Pre-diabetic"; // Yellow for 100-125
-  return "High"; // Red for > 125
+  if (value < 70) return "Low";
+  if (value <= 100) return "Normal";
+  if (value <= 140) return "Normal-Post-Meal";
+  if (value <= 180) return "Pre-diabetic";
+  return "High";
 }
 
 function getHeartRateStatus(value) {
@@ -301,12 +302,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
 
           if (selectedMetric === "Sugar Level") {
             switch (status) {
-              case "High": // > 125
+              case "High": // > 180
                 color = "rgba(255, 99, 132, 1)"; // Red
                 break;
-              case "Pre-diabetic": // 100-125
+              case "Pre-diabetic": // 140-180
                 color = "rgba(255, 206, 86, 1)"; // Yellow
                 break;
+              case "Normal-Post-Meal": // 100-140
               case "Normal": // 70-100
                 color = "rgba(75, 192, 192, 1)"; // Green
                 break;
@@ -358,12 +360,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
 
           if (selectedMetric === "Sugar Level") {
             switch (status) {
-              case "High": // > 125
+              case "High": // > 180
                 color = "rgba(255, 99, 132, 1)"; // Red
                 break;
-              case "Pre-diabetic": // 100-125
+              case "Pre-diabetic": // 140-180
                 color = "rgba(255, 206, 86, 1)"; // Yellow
                 break;
+              case "Normal-Post-Meal": // 100-140
               case "Normal": // 70-100
                 color = "rgba(75, 192, 192, 1)"; // Green
                 break;

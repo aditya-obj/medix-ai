@@ -332,7 +332,11 @@ const Check = () => {
       case "sleepHours":
         return value >= 0 && value <= 24;
       case "bloodPressure":
-        return value.trim().length > 0;
+        return (
+          value.trim().length > 0 &&
+          value.includes("/") &&
+          value.split("/").length === 2
+        );
       case "heartRate":
         return value > 0;
       case "sugarLevel":
@@ -1035,6 +1039,15 @@ const Check = () => {
                       name="bloodPressure"
                       className={`form-input ${
                         errors.bloodPressure ? "error" : ""
+                      } ${
+                        formData.bloodPressure &&
+                        formData.bloodPressure.includes("/") &&
+                        formData.bloodPressure.split("/").length === 2 &&
+                        !errors.bloodPressure
+                          ? "normal-range"
+                          : formData.bloodPressure
+                          ? "out-of-range"
+                          : ""
                       }`}
                       placeholder="120/80 (Normal Range)"
                       value={formData.bloodPressure}
@@ -1043,6 +1056,21 @@ const Check = () => {
                     {errors.bloodPressure && (
                       <span className="error-message">
                         {errors.bloodPressure}
+                      </span>
+                    )}
+                    {formData.bloodPressure && (
+                      <span
+                        className={`range-indicator ${
+                          formData.bloodPressure.includes("/") &&
+                          formData.bloodPressure.split("/").length === 2
+                            ? "normal"
+                            : "high"
+                        }`}
+                      >
+                        {formData.bloodPressure.includes("/") &&
+                        formData.bloodPressure.split("/").length === 2
+                          ? "Normal range is between 90/60 and 120/80"
+                          : "Please enter in format: systolic/diastolic (e.g., 120/80)"}
                       </span>
                     )}
                   </div>
@@ -1058,6 +1086,14 @@ const Check = () => {
                       max="600"
                       className={`form-input ${
                         errors.heartRate ? "error" : ""
+                      } ${
+                        formData.heartRate &&
+                        formData.heartRate >= 60 &&
+                        formData.heartRate <= 100
+                          ? "normal-range"
+                          : formData.heartRate
+                          ? "out-of-range"
+                          : ""
                       }`}
                       value={formData.heartRate}
                       onChange={handleChange}
@@ -1066,6 +1102,30 @@ const Check = () => {
                     {errors.heartRate && (
                       <span className="error-message">{errors.heartRate}</span>
                     )}
+                    {formData.heartRate &&
+                      formData.heartRate.toString().length > 0 && (
+                        <span
+                          className={`range-indicator ${
+                            formData.heartRate.toString().length < 2
+                              ? "info"
+                              : formData.heartRate >= 60 &&
+                                formData.heartRate <= 100
+                              ? "normal"
+                              : formData.heartRate < 60
+                              ? "low"
+                              : "high"
+                          }`}
+                        >
+                          {formData.heartRate.toString().length < 2
+                            ? "Please enter complete heart rate"
+                            : formData.heartRate >= 60 &&
+                              formData.heartRate <= 100
+                            ? "Normal"
+                            : formData.heartRate < 60
+                            ? "Low Heart Rate"
+                            : "High Heart Rate"}
+                        </span>
+                      )}
                   </div>
 
                   <div className="form-group">
@@ -1094,21 +1154,26 @@ const Check = () => {
                       <span className="error-message">{errors.sugarLevel}</span>
                     )}
                     {formData.sugarLevel && !errors.sugarLevel && (
-                      <span
-                        className={`range-indicator ${
-                          validateField("sugarLevel", formData.sugarLevel)
-                            ? "normal"
+                      <>
+                        <span
+                          className={`range-indicator ${
+                            validateField("sugarLevel", formData.sugarLevel)
+                              ? "normal"
+                              : parseFloat(formData.sugarLevel) < 80
+                              ? "low"
+                              : "high"
+                          }`}
+                        >
+                          {validateField("sugarLevel", formData.sugarLevel)
+                            ? "Normal"
                             : parseFloat(formData.sugarLevel) < 80
-                            ? "low"
-                            : "high"
-                        }`}
-                      >
-                        {validateField("sugarLevel", formData.sugarLevel)
-                          ? "Normal"
-                          : parseFloat(formData.sugarLevel) < 80
-                          ? "Low"
-                          : "High"}
-                      </span>
+                            ? "Low"
+                            : "High"}
+                        </span>
+                        <span className="info-message">
+                          Normal range is between 80 and 120 mg/dL
+                        </span>
+                      </>
                     )}
                   </div>
                 </div>
