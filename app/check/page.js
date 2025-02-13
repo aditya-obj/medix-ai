@@ -345,6 +345,15 @@ const Check = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Prevent minus sign for number inputs
+    if (e.target.type === 'number') {
+      if (e.nativeEvent.data === '-') {
+        e.preventDefault();
+        return;
+      }
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -359,6 +368,20 @@ const Check = () => {
       ...prev,
       [name]: isValid,
     }));
+  };
+
+  // Update the preventMinus function to also prevent 'e'
+  const preventMinus = (e) => {
+    if (e.code === 'Minus' || e.code === 'KeyE') {
+      e.preventDefault();
+    }
+  };
+
+  // Add onKeyPress handler to prevent 'e' more reliably
+  const preventE = (e) => {
+    if (e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -664,6 +687,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="waterIntake"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       className={`form-input ${
                         errors.waterIntake ? "error" : ""
                       }`}
@@ -688,6 +713,8 @@ const Check = () => {
                       name="weight"
                       min="2"
                       max="2000"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       className={`form-input ${errors.weight ? "error" : ""} ${
                         validFields.weight ? "success" : ""
                       }`}
@@ -705,6 +732,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="height"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       min="30"
                       max="300"
                       className={`form-input ${errors.height ? "error" : ""} ${
@@ -724,6 +753,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="age"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       min="5"
                       max="120"
                       className={`form-input ${errors.age ? "error" : ""} ${
@@ -809,6 +840,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="cigarettesPerDay"
+                        onKeyDown={preventMinus}
+                        onKeyPress={preventE}
                         min="0"
                         max="50"
                         className={`form-input ${
@@ -856,6 +889,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="drinksPerWeek"
+                        onKeyDown={preventMinus}
+                        onKeyPress={preventE}
                         min="0"
                         max="200"
                         className={`form-input ${
@@ -903,6 +938,8 @@ const Check = () => {
                       <input
                         type="number"
                         name="hoursPerWeek"
+                        onKeyDown={preventMinus}
+                        onKeyPress={preventE}
                         min="0"
                         max="200"
                         className={`form-input ${
@@ -926,6 +963,8 @@ const Check = () => {
                   <input
                     type="number"
                     name="sleepHours"
+                    onKeyDown={preventMinus}
+                    onKeyPress={preventE}
                     min="1"
                     max="24"
                     className={`form-input ${
@@ -1010,6 +1049,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="heartRate"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       min="10"
                       max="600"
                       className={`form-input ${
@@ -1030,6 +1071,8 @@ const Check = () => {
                     <input
                       type="number"
                       name="sugarLevel"
+                      onKeyDown={preventMinus}
+                      onKeyPress={preventE}
                       min="10"
                       className={`form-input ${
                         errors.sugarLevel ? "error" : ""
