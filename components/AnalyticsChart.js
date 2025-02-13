@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import PropTypes from "prop-types";
 
 ChartJS.register(
   CategoryScale,
@@ -26,32 +27,57 @@ ChartJS.register(
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+// Move status check functions outside component
+const STATUS_RANGES = {
+  BLOOD_PRESSURE: [
+    { max: 90, status: "Low" },
+    { max: 120, status: "Normal" },
+    { max: 130, status: "Elevated" },
+    { max: Infinity, status: "High" },
+  ],
+  SUGAR_LEVEL: [
+    { max: 70, status: "Low" },
+    { max: 100, status: "Normal" },
+    { max: 140, status: "Normal-Post-Meal" },
+    { max: 180, status: "Pre-diabetic" },
+    { max: Infinity, status: "High" },
+  ],
+  HEART_RATE: [
+    { max: 60, status: "Low" },
+    { max: 100, status: "Normal" },
+    { max: Infinity, status: "High" },
+  ],
+  PERFORMANCE: [
+    { min: 400, status: "Excellent" },
+    { min: 300, status: "Good" },
+    { min: 200, status: "Fair" },
+    { min: -Infinity, status: "Needs Improvement" },
+  ],
+};
+
+function getStatus(value, ranges, isPerformance = false) {
+  if (isPerformance) {
+    return (
+      ranges.find((range) => value >= range.min)?.status || "Needs Improvement"
+    );
+  }
+  return ranges.find((range) => value <= range.max)?.status || "High";
+}
+
 function getBPStatus(systolic) {
-  if (systolic < 90) return "Low";
-  if (systolic <= 120) return "Normal";
-  if (systolic <= 130) return "Elevated";
-  return "High";
+  return getStatus(systolic, STATUS_RANGES.BLOOD_PRESSURE);
 }
 
 function getSugarStatus(value) {
-  if (value < 70) return "Low";
-  if (value <= 100) return "Normal";
-  if (value <= 140) return "Normal-Post-Meal";
-  if (value <= 180) return "Pre-diabetic";
-  return "High";
+  return getStatus(value, STATUS_RANGES.SUGAR_LEVEL);
 }
 
 function getHeartRateStatus(value) {
-  if (value < 60) return "Low";
-  if (value <= 100) return "Normal";
-  return "High";
+  return getStatus(value, STATUS_RANGES.HEART_RATE);
 }
 
 function getPerformanceStatus(value) {
-  if (value >= 400) return "Excellent";
-  if (value >= 300) return "Good";
-  if (value >= 200) return "Fair";
-  return "Needs Improvement";
+  return getStatus(value, STATUS_RANGES.PERFORMANCE, true);
 }
 
 const AnalyticsChart = ({ selectedMetric, chartData }) => {
@@ -189,14 +215,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
     // Get the week's data
     let weekData = data.slice(startIndex, endIndex).map((value) => {
       if (!value) return null;
-      if (
-        selectedMetric === "Blood Pressure" &&
-        typeof value === "string" &&
-        value.includes("/")
-      ) {
-        const [systolic] = value.split("/");
-        return parseInt(systolic);
-      }
+      // For blood pressure, keep the original string format
       return value;
     });
 
@@ -251,8 +270,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
 
   const getMetricStatus = (value, metric) => {
     switch (metric) {
-      case "Blood Pressure":
+      case "Blood Pressure": {
+        if (typeof value === "string" && value.includes("/")) {
+          const [systolic] = value.split("/").map(Number);
+          return getBPStatus(systolic);
+        }
         return getBPStatus(value);
+      }
       case "Sugar Level":
         return getSugarStatus(value);
       case "Heart Rate":
@@ -296,22 +320,65 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
     };
   };
 
+  // Add style element only once when component mounts
+  useEffect(() => {
+    const styleId = "analytics-chart-pulse";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = `
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.9; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(style);
+      return () => {
+        const existingStyle = document.getElementById(styleId);
+        if (existingStyle) {
+          existingStyle.remove();
+        }
+      };
+    }
+  }, []);
+
+  // Memoize weekDates to prevent unnecessary recalculations
+  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
+
+  // Memoize chart data
+  const currentWeekData = useMemo(
+    () => getWeekData(metricData[selectedMetric].activeData, weekOffset),
+    [selectedMetric, weekOffset, metricData]
+  );
+
   const chartConfig = {
-    labels: getWeekDates(weekOffset).map((day) => day.label),
+    labels: weekDates.map((day) => day.label),
     datasets: [
       {
         fill: false,
-        data: getWeekData(metricData[selectedMetric].activeData, weekOffset),
+        data: currentWeekData.map((value) => {
+          if (
+            selectedMetric === "Blood Pressure" &&
+            typeof value === "string" &&
+            value.includes("/")
+          ) {
+            const [systolic] = value.split("/").map(Number);
+            return systolic;
+          }
+          return value;
+        }),
         borderColor: "transparent",
         metric: selectedMetric,
         pointBackgroundColor: (context) => {
           if (!context.raw) return "transparent";
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[context.dataIndex];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
 
-          const status = getMetricStatus(context.raw, selectedMetric);
+          const value = currentWeekData[context.dataIndex];
+          const status = getMetricStatus(value, selectedMetric);
           let color;
 
           if (selectedMetric === "Sugar Level") {
@@ -364,12 +431,13 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         },
         pointBorderColor: (context) => {
           if (!context.raw) return "transparent";
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[context.dataIndex];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
 
-          const status = getMetricStatus(context.raw, selectedMetric);
+          const value = currentWeekData[context.dataIndex];
+          const status = getMetricStatus(value, selectedMetric);
           let color;
 
           if (selectedMetric === "Sugar Level") {
@@ -430,7 +498,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         },
         pointRadius: (context) => {
           if (!context.raw) return 0;
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[context.dataIndex];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
@@ -439,7 +507,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         pointHoverRadius: 10,
         pointBorderWidth: (context) => {
           if (!context.raw) return 0;
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[context.dataIndex];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
@@ -450,17 +518,6 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
       },
     ],
   };
-
-  // Update keyframes animation for a subtle pulse effect
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.9; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-  `;
-  document.head.appendChild(style);
 
   const baseOptions = {
     responsive: true,
@@ -494,42 +551,36 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         boxPadding: getResponsiveValue(4, 5, 6),
         callbacks: {
           label: function (context) {
-            const value = Math.round(context.parsed.y);
+            const value = currentWeekData[context.dataIndex];
             const status = getMetricStatus(value, selectedMetric);
             let label = "";
 
             switch (selectedMetric) {
               case "Blood Pressure": {
-                const originalValue =
-                  metricData[selectedMetric].activeData[context.dataIndex];
-                if (
-                  originalValue &&
-                  typeof originalValue === "string" &&
-                  originalValue.includes("/")
-                ) {
-                  label = `${originalValue} mmHg`;
-                } else {
-                  const diastolic = Math.round(value * 0.65);
-                  label = `${value}/${diastolic} mmHg`;
+                if (value && typeof value === "string" && value.includes("/")) {
+                  label = `${value} mmHg`;
+                } else if (value) {
+                  const systolic = Math.round(value);
+                  const diastolic = Math.round(systolic * 0.65);
+                  label = `${systolic}/${diastolic} mmHg`;
                 }
                 break;
               }
               case "Sugar Level":
-                label = `${value} mg/dL`;
+                label = `${Math.round(value)} mg/dL`;
                 break;
               case "Heart Rate":
-                label = `${value} BPM`;
+                label = `${Math.round(value)} BPM`;
                 break;
               case "Performance":
-                label = `${value} Score`;
+                label = `${Math.round(value)} Score`;
                 break;
             }
 
             return [`Value: ${label}`, `Status: ${status}`];
           },
           title: function (tooltipItems) {
-            const days = getWeekDates();
-            const day = days[tooltipItems[0].dataIndex];
+            const day = weekDates[tooltipItems[0].dataIndex];
             if (!day) return "";
 
             const date = day.date;
@@ -574,7 +625,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
                 ? value
                 : `${value}/${diastolic}`;
             }
-            return value + (selectedMetric === "Performance" ? "" : "");
+            return value;
           },
         },
       },
@@ -587,7 +638,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         ticks: {
           padding: getResponsiveValue(6, 7, 8),
           color: (context) => {
-            const days = getWeekDates();
+            const days = weekDates;
             const day = days[context.index];
             if (!day) return "#666";
 
@@ -598,7 +649,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
             return day.isFuture ? "#999" : "#666";
           },
           font: (context) => {
-            const days = getWeekDates();
+            const days = weekDates;
             const day = days[context.index];
             if (!day)
               return {
@@ -630,7 +681,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         hoverBorderWidth: getResponsiveValue(2, 2.5, 3),
         radius: function (context) {
           if (!context.raw) return 0;
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[context.dataIndex];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
@@ -656,7 +707,7 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
         meta.data.forEach((point, index) => {
           if (!dataset.data[index]) return;
 
-          const days = getWeekDates(weekOffset);
+          const days = weekDates;
           const day = days[index];
           const today = new Date();
           const isToday = day?.date.toDateString() === today.toDateString();
@@ -786,6 +837,33 @@ const AnalyticsChart = ({ selectedMetric, chartData }) => {
       <Line options={baseOptions} data={chartConfig} />
     </div>
   );
+};
+
+AnalyticsChart.propTypes = {
+  selectedMetric: PropTypes.oneOf([
+    "Blood Pressure",
+    "Sugar Level",
+    "Heart Rate",
+    "Performance",
+  ]).isRequired,
+  chartData: PropTypes.shape({
+    bp: PropTypes.arrayOf(
+      PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+        PropTypes.oneOf([null]),
+      ])
+    ),
+    sugar: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([null])])
+    ),
+    hr: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([null])])
+    ),
+    performance: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([null])])
+    ),
+  }).isRequired,
 };
 
 export default AnalyticsChart;
