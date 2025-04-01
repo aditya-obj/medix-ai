@@ -1,4 +1,4 @@
-# Desease Risk Prediction
+# Medix AI
 
 ## Overview
 
