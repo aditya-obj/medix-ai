@@ -99,7 +99,7 @@ const numPrompt = (result) => {
 };
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 const DEBOUNCE_DELAY = 2000; // Changed to 2000ms (2 seconds)
 
